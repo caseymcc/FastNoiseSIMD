@@ -42,4 +42,10 @@ elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_CXX_COMPILER_ID}"
 endif()
 
 add_executable(testApp testApp/main.cpp)
-target_link_libraries(testApp fastNoise)
+
+if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+    set(fastNoise_libs ${fastNoise_libs}
+        Mincore.lib
+    )
+endif()
+target_link_libraries(testApp ${fastNoise_libs})
