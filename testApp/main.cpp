@@ -1,4 +1,4 @@
-#include "HastyNoise/HastyNoise.h"
+#include "HastyNoise/hastyNoise.h"
 
 #ifdef _MSC_VER
 #define WINDOWS_LEAN_AND_MEAN
