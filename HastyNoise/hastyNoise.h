@@ -1,4 +1,4 @@
-// FastNoiseSIMD.h
+// HastyNoise.h
 //
 // MIT License
 //
@@ -26,69 +26,66 @@
 // off every 'zix'.)
 //
 
-// VERSION: 0.7.0
+#ifndef HASTYNOISE_H
+#define HASTYNOISE_H
 
-#ifndef FASTNOISE_SIMD_H
-#define FASTNOISE_SIMD_H
-
-#include "FastNoiseSIMD_export.h"
+#include "hastyNoise_export.h"
 
 #include <memory>
 #include <vector>
 #include <string>
 #include <functional>
 
-namespace FastNoise
+namespace HastyNoise
 {
 
 #if defined(__arm__) || defined(__aarch64__)
-#   define FN_ARM
-//#define FN_IOS
-#   define FN_COMPILE_NEON
-#   define FN_COMPILE_NO_SIMD_FALLBACK
+#   define HN_ARM
+//#define HN_IOS
+#   define HN_COMPILE_NEON
+#   define HN_COMPILE_NO_SIMD_FALLBACK
 #else
 
 #ifdef _MSC_VER
 #   if(_M_X64  == 100)
-#       define FN_COMPILE_SSE2
-#       define FN_COMPILE_SSE41
+#       define HN_COMPILE_SSE2
+#       define HN_COMPILE_SSE41
 #       ifdef __AVX2__
-#           define FN_COMPILE_AVX2
+#           define HN_COMPILE_AVX2
 #       endif
-#       define FN_COMPILE_NO_SIMD_FALLBACK
+#       define HN_COMPILE_NO_SIMD_FALLBACK
 #   endif
 #else
 #   ifdef __SSE2__
-#       define FN_COMPILE_SSE2
+#       define HN_COMPILE_SSE2
 #   endif
 #   ifdef __SSE4_1__
-#       define FN_COMPILE_SSE41
+#       define HN_COMPILE_SSE41
 #   endif
 #   ifdef __AVX2__
-#       define FN_COMPILE_AVX2
+#       define HN_COMPILE_AVX2
 #   endif
 #   ifdef __AVX512F__
-#       define FN_COMPILE_AVX512
+#       define HN_COMPILE_AVX512
 #   endif
 #endif
 
 // Using FMA instructions with AVX(51)2/NEON provides a small performance increase but can cause 
 // minute variations in noise output compared to other SIMD levels due to higher calculation precision
 // Intel compiler will always generate FMA instructions, use /Qfma- or -no-fma to disable
-#define FN_USE_FMA
+#define HN_USE_FMA
 #endif
 
-#define FN_CELLULAR_INDEX_MAX 3
+#define HN_CELLULAR_INDEX_MAX 3
 
 // Using aligned sets of memory for float arrays allows faster storing of SIMD data
 // Comment out to allow unaligned float arrays to be used as sets
-#define FN_ALIGNED_SETS
+#define HN_ALIGNED_SETS
 
 /*
 Tested Compilers:
--MSVC v120/v140
--Intel 16.0
--GCC 4.7 Linux
+-MSVC v140/v150
+-GCC 7 Linux
 -Clang MacOSX
 
 CPU instruction support:
@@ -128,7 +125,7 @@ enum class SIMDType { None, Neon, SSE2, SSE4_1, AVX2, AVX512 };
 enum class NoiseClass {Single, Fractal, Cellular};
 enum class BuildType {Default, Map, Vector };
 
-struct FASTNOISE_EXPORT NoiseDetails
+struct HASTYNOISE_EXPORT NoiseDetails
 {
     NoiseDetails():
         seed(1337),
@@ -166,7 +163,7 @@ struct FASTNOISE_EXPORT NoiseDetails
     float  cellularJitter;
 };
 
-struct FASTNOISE_EXPORT PerturbDetails
+struct HASTYNOISE_EXPORT PerturbDetails
 {
     PerturbDetails():
         Amp(1.0f),
@@ -198,7 +195,7 @@ typedef NoiseSIMD *(*NewNoiseSimdFunc)(int);
 typedef size_t(*AlignedSizeFunc)(size_t);
 typedef float *(*GetEmptySetFunc)(size_t);
 
-struct FASTNOISE_EXPORT NoiseFuncs
+struct HASTYNOISE_EXPORT NoiseFuncs
 {
     NoiseFuncs():createFunc(nullptr), alignedSizeFunc(nullptr), getEmptySetFunc(nullptr) {}
 
@@ -209,19 +206,19 @@ struct FASTNOISE_EXPORT NoiseFuncs
 
 
 // Loads all available simd libraries from directory
-FASTNOISE_EXPORT bool loadSimd(std::string directory);
+HASTYNOISE_EXPORT bool loadSimd(std::string directory);
 
 
 namespace details
 {
 //Creates Noise class at SIMD level
-FASTNOISE_EXPORT NoiseSIMD *CreateNoise(int seed=1337, size_t simdLevel=-1);
+HASTYNOISE_EXPORT NoiseSIMD *CreateNoise(int seed=1337, size_t simdLevel=-1);
 
 // Free a noise set from memory
-FASTNOISE_EXPORT void FreeNoiseSet(float *noiseSet, size_t simdLevel);
+HASTYNOISE_EXPORT void FreeNoiseSet(float *noiseSet, size_t simdLevel);
 
 // Create an empty (aligned) noise set for use with FillNoiseSet()
-FASTNOISE_EXPORT float *GetEmptySet(size_t size, size_t simdLevel);
+HASTYNOISE_EXPORT float *GetEmptySet(size_t size, size_t simdLevel);
 
 // Create an empty (aligned) noise set for use with FillNoiseSet()
 inline float *GetEmptySet(size_t xSize, size_t ySize, size_t zSize, size_t simdLevel) { return GetEmptySet(xSize*ySize*zSize, simdLevel); }
@@ -236,7 +233,7 @@ inline float *GetEmptySet(size_t xSize, size_t ySize, size_t zSize, size_t simdL
 // 1: SSE2
 // 0: Fallback, no SIMD support
 //size_t GetSIMDLevel(void);
-FASTNOISE_EXPORT size_t GetFastestSIMD();
+HASTYNOISE_EXPORT size_t GetFastestSIMD();
 
 // Creates new NoiseSIMD for the highest supported instuction set of the CPU 
 // 5: ARM NEON
@@ -277,7 +274,7 @@ inline FloatBuffer GetEmptySet(size_t xSize, size_t ySize, size_t zSize, size_t 
 }
 
 // Rounds the size up to the nearest aligned size for the current SIMD level
-FASTNOISE_EXPORT size_t AlignedSize(size_t size, size_t simdLevel);
+HASTYNOISE_EXPORT size_t AlignedSize(size_t size, size_t simdLevel);
 
 struct VectorSet
 {
@@ -326,10 +323,10 @@ public:
 };
 
 //Fills VectorSet with incrementing values
-FASTNOISE_EXPORT void FillVectorSet(VectorSet* vectorSet, int xSize, int ySize, int zSize);
+HASTYNOISE_EXPORT void FillVectorSet(VectorSet* vectorSet, int xSize, int ySize, int zSize);
 
 //Fills VectorSet with incrementing values using sampleScale
-FASTNOISE_EXPORT void FillSamplingVectorSet(VectorSet* vectorSet, int sampleScale, int xSize, int ySize, int zSize);
+HASTYNOISE_EXPORT void FillSamplingVectorSet(VectorSet* vectorSet, int sampleScale, int xSize, int ySize, int zSize);
 
 //Gets a VectorSet that works with simdLevel
 inline std::unique_ptr<VectorSet> GetVectorSet(int xSize, int ySize, int zSize, size_t simdLevel)
@@ -348,11 +345,11 @@ inline std::unique_ptr<VectorSet> GetSamplingVectorSet(int sampleScale, int xSiz
 }
 
 //Internal, registers NoiseSIMD classes
-FASTNOISE_EXPORT bool registerNoiseSimd(SIMDType type, NewNoiseSimdFunc createFunc, AlignedSizeFunc alignedSizeFunc, GetEmptySetFunc getEmptySetFunc);
+HASTYNOISE_EXPORT bool registerNoiseSimd(SIMDType type, NewNoiseSimdFunc createFunc, AlignedSizeFunc alignedSizeFunc, GetEmptySetFunc getEmptySetFunc);
 
-FASTNOISE_EXPORT float CalculateFractalBounding(int octaves, float gain);
+HASTYNOISE_EXPORT float CalculateFractalBounding(int octaves, float gain);
 
-class FASTNOISE_EXPORT NoiseSIMD
+class HASTYNOISE_EXPORT NoiseSIMD
 {
 public:
     virtual ~NoiseSIMD() {}
@@ -439,13 +436,13 @@ public:
     // Gets float buffer compatiable with the classes SIMD level
     FloatBuffer GetEmptySet(size_t xSize, size_t ySize, size_t zSize)
     {
-        return FastNoise::GetEmptySet(xSize*ySize*zSize, m_SIMDLevel);
+        return HastyNoise::GetEmptySet(xSize*ySize*zSize, m_SIMDLevel);
     }
 
     // Gets float buffer compatiable with the classes SIMD level, and fills it
     FloatBuffer GetNoiseSet(int xStart, int yStart, int zStart, int xSize, int ySize, int zSize, float scaleModifier=1.0f)
     {
-        FloatBuffer noiseSet=FastNoise::GetEmptySet(xSize*ySize*zSize, m_SIMDLevel);
+        FloatBuffer noiseSet=HastyNoise::GetEmptySet(xSize*ySize*zSize, m_SIMDLevel);
 
         FillSet(noiseSet.get(), xStart, yStart, zStart, xSize, ySize, zSize, scaleModifier);
 
@@ -461,13 +458,13 @@ public:
     // Gets VectorSet compatiable with the classes SIMD level
     std::unique_ptr<VectorSet> GetVectorSet(int xSize, int ySize, int zSize)
     {
-        return FastNoise::GetVectorSet(xSize, ySize, zSize, m_SIMDLevel);
+        return HastyNoise::GetVectorSet(xSize, ySize, zSize, m_SIMDLevel);
     }
 
     // Gets VectorSet compatiable with the classes SIMD level, using sampleScale
     std::unique_ptr<VectorSet> GetSamplingVectorSet(int sampleScale, int xSize, int ySize, int zSize)
     {
-        return FastNoise::GetSamplingVectorSet(sampleScale, xSize, ySize, zSize, m_SIMDLevel);
+        return HastyNoise::GetSamplingVectorSet(sampleScale, xSize, ySize, zSize, m_SIMDLevel);
     }
 
 protected:
@@ -485,6 +482,6 @@ protected:
     size_t m_SIMDLevel;
 };
 
-}//namespace FastNoise
+}//namespace HastyNoise
 
 #endif

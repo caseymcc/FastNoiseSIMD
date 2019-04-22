@@ -1,6 +1,6 @@
 #include <immintrin.h>
 
-namespace FastNoise
+namespace HastyNoise
 {
 namespace details
 {
@@ -21,7 +21,7 @@ struct SIMD<SIMDType::AVX2>
     static Int zeroInt() { return _mm256_setzero_si256(); }
     static void zeroAll() {}
 
-#ifdef FN_ALIGNED_SETS
+#ifdef HN_ALIGNED_SETS
     static void store(float *p, Float a) { _mm256_store_ps(p, a); }
     static Float load(float *p) { return _mm256_load_ps(p); }
 #else

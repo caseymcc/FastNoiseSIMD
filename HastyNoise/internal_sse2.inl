@@ -1,15 +1,15 @@
 
-#ifdef FN_COMPILE_SSE2
+#ifdef HN_COMPILE_SSE2
 #include <xmmintrin.h>
 #include <emmintrin.h>
 #endif
 
-namespace FastNoise
+namespace HastyNoise
 {
 namespace details
 {
 
-#ifdef FN_COMPILE_SSE2
+#ifdef HN_COMPILE_SSE2
 template<>
 struct SIMD<SIMDType::SSE2>
 {
@@ -26,7 +26,7 @@ struct SIMD<SIMDType::SSE2>
     static Int zeroInt() { return _mm_setzero_si128(); }
     static void zeroAll() {}
 
-#ifdef FN_ALIGNED_SETS
+#ifdef HN_ALIGNED_SETS
     static void store(float *p, Float a) { _mm_store_ps(p, a); }
     static Float load(float *p) { return _mm_load_ps(p); }
 #else

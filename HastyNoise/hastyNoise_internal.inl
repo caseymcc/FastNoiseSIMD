@@ -1,4 +1,4 @@
-// FastNoiseSIMD_internal.cpp
+// HastyNoise_internal.cpp
 //
 // MIT License
 //
@@ -26,7 +26,7 @@
 // off every 'zix'.)
 //
 
-//#include "FastNoiseSIMD.h"
+//#include "hastyNoise.h"
 #include <assert.h> 
 
 #ifndef _WIN32
@@ -34,7 +34,7 @@
 #endif
 
 // Memory Allocation
-#if SIMD_LEVEL > FN_NO_SIMD_FALLBACK && defined(FN_ALIGNED_SETS)
+#if SIMD_LEVEL > HN_NO_SIMD_FALLBACK && defined(HN_ALIGNED_SETS)
 #ifdef _WIN32
 #define SIMD_ALLOCATE_SET(floatP, floatCount) floatP = (float*)_aligned_malloc((floatCount)* sizeof(float), MEMORY_ALIGNMENT)
 #else
@@ -45,20 +45,20 @@
 #define SIMD_ALLOCATE_SET(floatP, floatCount) floatP = new float[floatCount]
 #endif
 
-namespace FastNoise
+namespace HastyNoise
 {
 namespace details
 {
 
 template<SIMDType _SIMDType>
-const bool NoiseSIMD<_SIMDType>::m_registered=FastNoise::registerNoiseSimd(_SIMDType, NoiseSIMD<_SIMDType>::create, NoiseSIMD<_SIMDType>::AlignedSize, NoiseSIMD<_SIMDType>::GetEmptySet);
+const bool NoiseSIMD<_SIMDType>::m_registered=HastyNoise::registerNoiseSimd(_SIMDType, NoiseSIMD<_SIMDType>::create, NoiseSIMD<_SIMDType>::AlignedSize, NoiseSIMD<_SIMDType>::GetEmptySet);
 
 template<SIMDType _SIMDType>
 struct simdAlloc
 {
     static float *_(size_t count)
     {
-#ifdef FN_ALIGNED_SETS
+#ifdef HN_ALIGNED_SETS
 #   ifdef _WIN32
         return (float*)_aligned_malloc((count)*sizeof(float), SIMD<_SIMDType>::alignment());
 #   else
@@ -482,7 +482,7 @@ NoiseSIMD<_SIMDType>::NoiseSIMD(int seed)
 }
 
 template<SIMDType _SIMDType>
-FastNoise::NoiseSIMD *NoiseSIMD<_SIMDType>::create(int seed)
+HastyNoise::NoiseSIMD *NoiseSIMD<_SIMDType>::create(int seed)
 {
     return new NoiseSIMD<_SIMDType>(seed);
 }
@@ -490,7 +490,7 @@ FastNoise::NoiseSIMD *NoiseSIMD<_SIMDType>::create(int seed)
 template<SIMDType _SIMDType>
 size_t NoiseSIMD<_SIMDType>::AlignedSize(size_t size)
 {
-#ifdef FN_ALIGNED_SETS
+#ifdef HN_ALIGNED_SETS
 	// size must be a multiple of SIMD<_SIMDType>::vectorSize() (8)
 	if ((size & (SIMD<_SIMDType>::vectorSize() - 1)) != 0)
 	{
@@ -532,7 +532,7 @@ void axisReset(typename SIMD<_SIMDType>::Int &x, typename SIMD<_SIMDType>::Int &
     }
 }
 
-#ifdef FN_ALIGNED_SETS
+#ifdef HN_ALIGNED_SETS
 #define STORE_LAST_RESULT(_dest, _source) SIMD<_SIMDType>::store(_dest, _source)
 #else
 #include <cstring>
@@ -867,7 +867,7 @@ typename SIMD<_SIMDType>::Float RigidMultiSingle(const NoiseValues<_SIMDType> &n
     return result;
 }
 
-#ifdef FN_ALIGNED_SETS
+#ifdef HN_ALIGNED_SETS
 #define SIZE_MASK
 #else
 #define SIZE_MASK & ~(SIMD<_SIMDType>::vectorSize() - 1)
@@ -1100,7 +1100,7 @@ template<SIMDType _SIMDType, CellularDistance _CellularDistance, CellularReturnT
 static typename SIMD<_SIMDType>::Float VECTORCALL CellularReturnDistanceSingle(typename SIMD<_SIMDType>::Int seed, typename SIMD<_SIMDType>::Float x, typename SIMD<_SIMDType>::Float y, typename SIMD<_SIMDType>::Float z, typename SIMD<_SIMDType>::Float cellJitter, int index0, int index1)
 {
     typedef Constants<typename SIMD<_SIMDType>::Float, typename SIMD<_SIMDType>::Int, _SIMDType> Constant;
-	typename SIMD<_SIMDType>::Float distance[FN_CELLULAR_INDEX_MAX+1] = {Constant::numf_999999,Constant::numf_999999,Constant::numf_999999,Constant::numf_999999};
+	typename SIMD<_SIMDType>::Float distance[HN_CELLULAR_INDEX_MAX+1] = {Constant::numf_999999,Constant::numf_999999,Constant::numf_999999,Constant::numf_999999};
 	
 	typename SIMD<_SIMDType>::Int xc     = SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(x), Constant::numi_1);
 	typename SIMD<_SIMDType>::Int ycBase = SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(y), Constant::numi_1);
@@ -1432,7 +1432,7 @@ struct Build<_SIMDType, _NoiseType, _PerturbType, _FractalType, _CellularDistanc
             index+=SIMD<_SIMDType>::vectorSize();
         }
 
-#ifndef FN_ALIGNED_SETS
+#ifndef HN_ALIGNED_SETS
         if(loopMax!=vectorSet->size)
         {
             std::size_t remaining=(vectorSet->size-loopMax)*4;
@@ -1848,7 +1848,7 @@ void NoiseSIMD<_SIMDType>::FillWhiteNoiseSet(float* noiseSet, int xStart, int yS
 //	int localCountMax = (1 << (sampleScale * 3));
 //	int vMax = SIMD<_SIMDType>::vectorSize();
 //
-//#if SIMD_LEVEL == FN_NEON
+//#if SIMD_LEVEL == HN_NEON
 //	typename SIMD<_SIMDType>::Int sampleScaleV = SIMD<_SIMDType>::set(-sampleScale);
 //	typename SIMD<_SIMDType>::Int sampleScale2V = SIMD<_SIMDType>::mul(sampleScaleV, Constant::numi_2);
 //#endif
@@ -1882,7 +1882,7 @@ void NoiseSIMD<_SIMDType>::FillWhiteNoiseSet(float* noiseSet, int xStart, int yS
 //				{
 //                    uSIMD<SIMD<_SIMDType>::Int, SIMD<_SIMDType>::vectorSize()> xi, yi, zi;
 //
-//#if SIMD_LEVEL == FN_NEON
+//#if SIMD_LEVEL == HN_NEON
 //					xi.m = SIMD<_SIMDType>::_and(SIMD<_SIMDType>::shiftL(localCountSIMD, sampleScale2V), axisMask);
 //					yi.m = SIMD<_SIMDType>::_and(SIMD<_SIMDType>::shiftL(localCountSIMD, sampleScaleV), axisMask);
 //#else
@@ -1993,7 +1993,7 @@ void NoiseSIMD<_SIMDType>::FillWhiteNoiseSet(float* noiseSet, int xStart, int yS
 //	int localCountMax = (1 << (sampleScale * 3));
 //	int vMax = SIMD<_SIMDType>::vectorSize();
 //
-//#if SIMD_LEVEL == FN_NEON
+//#if SIMD_LEVEL == HN_NEON
 //	typename SIMD<_SIMDType>::Int sampleScaleV = SIMD<_SIMDType>::set(-sampleScale);
 //	typename SIMD<_SIMDType>::Int sampleScale2V = SIMD<_SIMDType>::mul(sampleScaleV, Constant::numi_2);
 //#endif
@@ -2027,7 +2027,7 @@ void NoiseSIMD<_SIMDType>::FillWhiteNoiseSet(float* noiseSet, int xStart, int yS
 //				{
 //                    uSIMD<SIMD<_SIMDType>::Int, SIMD<_SIMDType>::vectorSize()> xi, yi, zi;
 //
-//#if SIMD_LEVEL == FN_NEON
+//#if SIMD_LEVEL == HN_NEON
 //					xi.m = SIMD<_SIMDType>::_and(SIMD<_SIMDType>::shiftL(localCountSIMD, sampleScale2V), axisMask);
 //					yi.m = SIMD<_SIMDType>::_and(SIMD<_SIMDType>::shiftL(localCountSIMD, sampleScaleV), axisMask);
 //#else
@@ -2080,4 +2080,4 @@ void NoiseSIMD<_SIMDType>::FillWhiteNoiseSet(float* noiseSet, int xStart, int yS
 //}
 
 }//namespace details
-}//namespace FastNoise
+}//namespace HastyNoise

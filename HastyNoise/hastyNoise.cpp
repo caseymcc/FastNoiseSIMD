@@ -1,4 +1,4 @@
-// FastNoiseSIMD.cpp
+// HastyNoise.cpp
 //
 // MIT License
 //
@@ -26,7 +26,7 @@
 // off every 'zix'.)
 //
 
-#include "FastNoiseSIMD.h"
+#include "hastyNoise.h"
 #include <assert.h>
 #include <stdlib.h>
 #include <algorithm>
@@ -44,8 +44,8 @@
 // CPUid
 #ifdef _WIN32
 #include <intrin.h>
-#elif defined(FN_ARM)
-#if !defined(__aarch64__) && !defined(FN_IOS)
+#elif defined(HN_ARM)
+#if !defined(__aarch64__) && !defined(HN_IOS)
 #include "ARM/cpu-features.h"
 #endif
 #else
@@ -54,10 +54,10 @@
 #endif
 
 
-#if FN_USE_FILESYSTEM == 1
+#if HN_USE_FILESYSTEM == 1
 #include <filesystem>
 namespace fs=std::filesystem;
-#elif FN_USE_FILESYSTEM == 2
+#elif HN_USE_FILESYSTEM == 2
 #include <experimental/filesystem>
 #ifdef _MSC_VER
 namespace fs=std::experimental::filesystem::v1;
@@ -70,7 +70,7 @@ namespace fs=std::experimental::filesystem;
 #include "simd_constants.inl"
 #include "internal_none.inl"
 
-namespace FastNoise
+namespace HastyNoise
 {
 static std::vector<NoiseFuncs> s_noiseSimds(SIMDTypeCount);
 
@@ -83,10 +83,10 @@ bool registerNoiseSimd(SIMDType type, NewNoiseSimdFunc createFunc, AlignedSizeFu
     return true;
 }
 
-#ifdef FN_ARM
+#ifdef HN_ARM
 size_t _GetFastestSIMD()
 {
-#if defined(__aarch64__) || defined(FN_IOS)
+#if defined(__aarch64__) || defined(HN_IOS)
     return (size_t)SIMDType::Neon;
 #else
     if(android_getCpuFamily()==ANDROID_CPU_FAMILY_ARM)
@@ -94,7 +94,7 @@ size_t _GetFastestSIMD()
         auto cpuFeatures=android_getCpuFeatures();
 
         if(cpuFeatures & ANDROID_CPU_ARM_FEATURE_NEON)
-#ifdef FN_USE_FMA
+#ifdef HN_USE_FMA
             if(cpuFeatures & ANDROID_CPU_ARM_FEATURE_NEON_FMA)
 #endif
                 return (size_t)SIMDType::Neon;
@@ -168,7 +168,7 @@ size_t _GetFastestSIMD()
     if(nIds<0x00000007)
         return (size_t)SIMDType::SSE4_1;
 
-#ifdef FN_USE_FMA
+#ifdef HN_USE_FMA
     bool cpuFMA3Support=(cpuInfo[2]&1<<12)!=0;
 #else
     bool cpuFMA3Support=true;
@@ -251,7 +251,7 @@ float *GetEmptySet(size_t size, size_t simdLevel)
 
 void FreeNoiseSet(float *floatArray, size_t level)
 {
-#ifdef FN_ALIGNED_SETS
+#ifdef HN_ALIGNED_SETS
 
     if(level!=(size_t)SIMDType::None)
 #ifdef _WIN32
@@ -268,7 +268,7 @@ void FreeNoiseSet(float *floatArray, size_t level)
 
 bool loadSimd(std::string libPath)
 {
-#if FN_USE_FILESYSTEM == 0
+#if HN_USE_FILESYSTEM == 0
     assert(false);
     return false;
 #else
@@ -293,7 +293,7 @@ bool loadSimd(std::string libPath)
         std::string fileName=filePath.filename().string();
         std::string extension=filePath.extension().string();
 
-        if(fs::is_regular_file(*iter) && extension==libExtension && fileName.compare(0, 10, "fastNoise_")==0)
+        if(fs::is_regular_file(*iter) && extension==libExtension && fileName.compare(0, 10, "hastyNoise_")==0)
         {
 #if defined(_WIN32) || defined(_WIN64)
             HINSTANCE instance=NULL;
@@ -456,8 +456,8 @@ void NoiseSIMD::SetCellularDistance2Indicies(int cellularDistanceIndex0, int cel
     m_noiseDetails.cellularDistanceIndex0=std::min(cellularDistanceIndex0, cellularDistanceIndex1);
     m_noiseDetails.cellularDistanceIndex1=std::max(cellularDistanceIndex0, cellularDistanceIndex1);
 
-    m_noiseDetails.cellularDistanceIndex0=std::min(std::max(m_noiseDetails.cellularDistanceIndex0, 0), FN_CELLULAR_INDEX_MAX);
-    m_noiseDetails.cellularDistanceIndex1=std::min(std::max(m_noiseDetails.cellularDistanceIndex1, 0), FN_CELLULAR_INDEX_MAX);
+    m_noiseDetails.cellularDistanceIndex0=std::min(std::max(m_noiseDetails.cellularDistanceIndex0, 0), HN_CELLULAR_INDEX_MAX);
+    m_noiseDetails.cellularDistanceIndex1=std::min(std::max(m_noiseDetails.cellularDistanceIndex1, 0), HN_CELLULAR_INDEX_MAX);
 }
 
-}//namespace FastNoise
+}//namespace HastyNoise

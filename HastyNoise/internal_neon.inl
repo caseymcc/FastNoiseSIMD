@@ -1,4 +1,4 @@
-namespace FastNoise
+namespace HastyNoise
 {
 namespace details
 {
@@ -11,7 +11,7 @@ struct SIMD<SIMDType::Neon>
     typedef Int Mask;
     static constexpr size_t const vectorSize() { return 4; }
     static constexpr size_t const alignment() { return 16; }
-    static constexpr int const level() { return FN_NEON; }
+    static constexpr int const level() { return HN_NEON; }
 
     static Float set(float a) { return vdupq_n_f32(a); }
     static Float zero() { return vdupq_n_f32(0); }
@@ -113,4 +113,4 @@ struct SIMD<SIMDType::Neon>
 };
 
 }//namespace details
-}//namespace FastNoise
+}//namespace HastyNoise

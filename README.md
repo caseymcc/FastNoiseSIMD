@@ -1,18 +1,18 @@
 
-[![license](https://img.shields.io/github/license/mashape/apistatus.svg?style=flat-square "License")](https://github.com/caseymcc/FastNoiseSIMD/blob/master/LICENSE)
-[![travis](https://img.shields.io/travis/caseymcc/FastNoiseSIMD/master.svg?logo=travis&style=flat-square&label=Linux%20OSX "Travis CI")](https://travis-ci.org/caseymcc/FastNoiseSIMD)
-[![appveyor](https://img.shields.io/appveyor/ci/caseymcc/FastNoiseSIMD/master.svg?logo=appveyor&style=flat-square&label=Windows "AppVeyor CI")](https://ci.appveyor.com/project/caseymcc/fastnoisesimd)
+[![license](https://img.shields.io/github/license/mashape/apistatus.svg?style=flat-square "License")](https://github.com/caseymcc/HastyNoise/blob/master/LICENSE)
+[![travis](https://img.shields.io/travis/caseymcc/HastyNoise/master.svg?logo=travis&style=flat-square&label=Linux%20OSX "Travis CI")](https://travis-ci.org/caseymcc/HastyNoise)
+[![appveyor](https://img.shields.io/appveyor/ci/caseymcc/HastyNoise/master.svg?logo=appveyor&style=flat-square&label=Windows "AppVeyor CI")](https://ci.appveyor.com/project/caseymcc/hastynoise)
 
 
-# FastNoise SIMD (altered)
+# Origins
 This is an altered version of [FastNoiseSIMD](https://github.com/Auburns/FastNoiseSIMD). All of the macros in the original version have been replace with templates allowing for a little better debugging. Also the library has been altered to create multiple shared libraries each compiled with the proper SIMD Instructions. The shared libraries are dynamically loaded by the main library.
 
-# FastNoise SIMD
-FastNoise SIMD is the SIMD implementation of my noise library [FastNoise](https://github.com/Auburns/FastNoise). It aims to provide faster performance through the use of intrinsic(SIMD) CPU functions. Vectorisation of the code allows noise functions to process data in sets of 4/8/16 increasing performance by 700% in some cases (Simplex).
+# HastyNoise
+Hasty Noise is a noise library. It aims to provide high performance noise through the use of SIMD instructions on a variety of platforms. Vectorisation of the code allows noise functions to process data in sets of 4/8/16 increasing performance by 700% in some cases (Simplex).
 
-After releasing FastNoise I got in contact with the author of [FastNoise SIMD](https://github.com/jackmott/FastNoise-SIMD) (naming is coincidence) and was inspired to work with SIMD functions myself. Through his code and discussions with him I created my implementation with even more optimisation thanks to the removal of lookup tables. 
+The library compiles a shared library for each of the SIMD instructions sets. During compile time the library will build the highest level of SIMD supported by the compilier and at runtime all of the SIMD libraries built are loaded and the highest supported instruction set is reported. By default the library will use the highest level of SIMD detected. If no support is found it will fallback to standard types (float/int).
 
-Runtime detection of highest supported instruction set ensures the fastest possible performance with only 1 compile needed. If no support is found it will fallback to standard types (float/int).
+"We must not be hasty." - Treebeard
 
 ## Features
 
@@ -27,10 +27,8 @@ Runtime detection of highest supported instruction set ensures the fastest possi
 - Integrated up-sampling
 - Easy to use 3D cave noise
 
-Credit to [CubicNoise](https://github.com/jobtalle/CubicNoise) for the cubic noise algorithm
-
 ## Supported Instruction Sets
-- ARM NEON
+- ~ARM NEON~ needs testing
 - AVX-512F
 - AVX2 - FMA3
 - SSE4.1
@@ -41,33 +39,29 @@ Credit to [CubicNoise](https://github.com/jobtalle/CubicNoise) for the cubic noi
 - GCC 7 Linux
 - Clang Linux/MacOSX
 
+## Tested Platforms
+- Windows
+- Linux
+- ~Android~ needs updates
+- MacOSX
+- ~iOs~ needs updates
+
 ## Wiki
-[Docs](https://github.com/Auburns/FastNoiseSIMD/wiki)
+[Docs](https://github.com/caseymcc/HastyNoise/wiki)
 
 ## Related repositories
 
 - [FastNoiseSIMD](https://github.com/Auburns/FastNoiseSIMD)
 - [FastNoise](https://github.com/Auburns/FastNoise)
-- [PyFastNoiseSIMD](https://github.com/robbmcleod/PyFastNoiseSIMD)
-
-# FastNoise SIMD Preview
-
-I have written a compact testing application for all the features included in FastNoiseSIMD with a visual representation. I use this for development purposes and testing noise settings used in terrain generation. The fastest supported instruction set is also reported.
-
-Download links can be found in the [Releases Section](https://github.com/Auburns/FastNoiseSIMD/releases).
-
-![Simplex Fractal](http://i.imgur.com/45JkT5j.png)
+- [CubicNoise](https://github.com/jobtalle/CubicNoise)
 
 # Performance Comparisons
-Using default noise settings on FastNoise SIMD and matching those settings across the other libraries where possible.
-
-### Current:
 Timings below timings are to generate 100x 64x64x64 (~26.2M) points of noise on a single thread.
 
 - CPU: Intel Core i7-5820K @ 3.3Ghz
 - Compiler: Visual Studio 2017 x64
 
-| Noise Type  | AVX512 |  AVX2  | SSE4.1 |  SSE2  | FastNoise |
+|  Noise Type | AVX512 |  AVX2  | SSE4.1 |  SSE2  |    None   |
 |-------------|--------|--------|--------|--------|-----------|
 | White Noise |        |    9ms |   18ms |   21ms |      48ms |
 | Value       |        |  114ms |  243ms |  282ms |    2071ms |
@@ -75,47 +69,3 @@ Timings below timings are to generate 100x 64x64x64 (~26.2M) points of noise on 
 | Simplex     |        |  198ms |  372ms |  474ms |    2769ms |
 | Cellular    |        |  915ms | 2095ms | 2218ms |   16388ms |
 | Cubic       |        |  668ms | 1370ms | 2336ms |    5698ms |
-
-
-### Previous version timings: (pre template)
-Timings below are x1000 ns to generate 32x32x32 points of noise on a single thread.
-
-- CPU: Intel Xeon Skylake @ 2.0Ghz
-- Compiler: Intel 17.0 x64
-
-| Noise Type  | AVX512 | AVX2 | SSE4.1 | SSE2 | FastNoise | LibNoise |
-|-------------|--------|------|--------|------|-----------|----------|
-| White Noise | 7      | 9    | 16     | 29   | 141       |          |
-| Value       | 92     | 152  | 324    | 436  | 642       |          |
-| Perlin      | 147    | 324  | 592    | 795  | 1002      | 1368     |
-| Simplex     | 129    | 294  | 548    | 604  | 1194      |          |
-| Cellular    | 851    | 1283 | 2679   | 2959 | 2979      | 58125    |
-| Cubic       | 615    | 952  | 1970   | 3516 | 2979      |          |
-
-Comparision of fractals and sampling performance [here](https://github.com/Auburns/FastNoiseSIMD/wiki/In-depth-SIMD-level).
-
-
-# Examples
-### Cellular Noise
-![Cellular Noise](http://i.imgur.com/RshUkoe.png)
-
-![Cellular Noise](http://i.imgur.com/PjPYBXu.png)
-
-![Cellular Noise](http://i.imgur.com/hyKjIuH.png)
-
-[Cave noise example](https://www.youtube.com/watch?v=Df4Hidvq11M)
-
-### Fractal Noise
-![Simplex Fractal Billow](http://i.imgur.com/gURJtpc.png)
-
-![Perlin Fractal Billow](http://i.imgur.com/IcjbpYz.png)
-
-### Value Noise
-![Value Noise](http://i.imgur.com/Ss22zRs.png)
-
-### White Noise
-![White Noise](http://i.imgur.com/wcTlyek.png)
-
-### Perturb
-![Perturbed Cellular Noise](http://i.imgur.com/xBKGo1E.png)
-

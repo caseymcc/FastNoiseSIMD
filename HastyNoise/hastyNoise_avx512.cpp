@@ -1,12 +1,12 @@
-#ifdef fastNoise_avx512_EXPORTS
-#define fastNoise_EXPORTS
+#ifdef hastyNoise_avx512_EXPORTS
+#define hastyNoise_EXPORTS
 #endif
 
-#include "FastNoiseSIMD.h"
+#include "hastyNoise.h"
 
 #include "simd_constants.inl"
 
-namespace FastNoise
+namespace HastyNoise
 {
 namespace details
 {
@@ -31,11 +31,11 @@ Float Constants<Float, Int, SIMDType::AVX512>::numf_Z_GRAD;
 
 #include "internal_none.inl"
 #include "internal_avx512.inl"
-#include "FastNoiseSIMD_internal.h"
+#include "hastyNoise_internal.h"
 
 #include "simd_init.inl"
 
-namespace FastNoise
+namespace HastyNoise
 {
 namespace details
 {
@@ -60,9 +60,9 @@ struct InitSIMDValues<SIMDType::AVX512>:InitSIMDValuesBase<SIMDType::AVX512>
 
 }
 }
-#include "FastNoiseSIMD_internal.inl"
+#include "hastyNoise_internal.inl"
 
-namespace FastNoise
+namespace HastyNoise
 {
 namespace details
 {
@@ -83,7 +83,7 @@ struct GradCoord<SIMDType::AVX512>
     }
 };
 
-template class FASTNOISE_EXPORT NoiseSIMD<SIMDType::AVX512>;
+template class HASTYNOISE_EXPORT NoiseSIMD<SIMDType::AVX512>;
 //template struct Constants<typename SIMD<SIMDType::AVX512>::Float, typename SIMD<SIMDType::AVX512>::Int, SIMDType::AVX512>;
 
 }//namespace details

@@ -1,4 +1,4 @@
-namespace FastNoise
+namespace HastyNoise
 {
 namespace details
 {
@@ -89,4 +89,4 @@ struct InitSIMDValues:InitSIMDValuesBase<_SIMDType>
 
 
 }//namespace details
-}//namespace FastNoise
+}//namespace HastyNoise

@@ -1,4 +1,4 @@
-// FastNoiseSIMD_internal.h
+// HastyNoise_internal.h
 //
 // MIT License
 //
@@ -25,10 +25,10 @@
 // The developer's email is jorzixdan.me2@gzixmail.com (for great email, take
 // off every 'zix'.)
 //
-#ifndef _FastNoiseSIMD_internal_h_
-#define _FastNoiseSIMD_internal_h_
+#ifndef _HastyNoise_internal_h_
+#define _HastyNoise_internal_h_
 
-namespace FastNoise
+namespace HastyNoise
 {
 namespace details
 {
@@ -42,7 +42,7 @@ struct PerturbValues
 
 
 template<SIMDType _SIMDType>
-class NoiseSIMD:public FastNoise::NoiseSIMD
+class NoiseSIMD:public HastyNoise::NoiseSIMD
 {
 public:
     typedef typename SIMD<_SIMDType>::Float Float;
@@ -50,7 +50,7 @@ public:
 
     NoiseSIMD(int seed=1337);
 
-    static FastNoise::NoiseSIMD *create(int seed=1337);
+    static HastyNoise::NoiseSIMD *create(int seed=1337);
     static float* GetEmptySet(size_t size);
     static size_t AlignedSize(size_t size);
     static const bool m_registered;
@@ -65,6 +65,6 @@ public:
     
 
 }//namespace details
-}//namespace FastNoiseSIMD
+}//namespace HastyNoiseSIMD
 
 #endif

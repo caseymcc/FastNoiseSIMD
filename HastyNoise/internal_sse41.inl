@@ -1,13 +1,13 @@
-#ifdef FN_COMPILE_SSE41
+#ifdef HN_COMPILE_SSE41
 #include <smmintrin.h>
 #endif
 
-namespace FastNoise
+namespace HastyNoise
 {
 namespace details
 {
 
-#ifdef FN_COMPILE_SSE41
+#ifdef HN_COMPILE_SSE41
 
 template<>
 struct SIMD<SIMDType::SSE4_1>:SIMD<SIMDType::SSE2>

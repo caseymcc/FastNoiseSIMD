@@ -1,6 +1,6 @@
 #include <math.h>
 
-namespace FastNoise
+namespace HastyNoise
 {
 namespace details
 {
@@ -49,7 +49,7 @@ struct SIMD
     static Float max(Float  a, Float b) { return fmaxf(a, b); }
     static Float invSqrt(Float x)
     {
-#ifdef FN_FAST_INVSQRT
+#ifdef HN_FAST_INVSQRT
         //this does not match the precision of the SIMD functions, nor will 1.0f/sqrt(x)
         float xhalf=0.5f * x;
         int i=*(int*)&x;
@@ -111,4 +111,4 @@ struct SIMD
 };
 
 }//namespace details
-}//namespace FastNoise
+}//namespace HastyNoise

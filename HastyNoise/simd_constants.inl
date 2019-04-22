@@ -1,4 +1,4 @@
-namespace FastNoise
+namespace HastyNoise
 {
 namespace details
 {
@@ -136,4 +136,4 @@ template<typename Float, typename Int, SIMDType _SIMDType>
 Int Constants<Float, Int, _SIMDType>::numi_13;
 
 }//namespace details
-}//namespace FastNoise
+}//namespace HastyNoise

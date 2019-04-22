@@ -1,4 +1,4 @@
-#include "FastNoiseSIMD/FastNoiseSIMD.h"
+#include "HastyNoise/HastyNoise.h"
 
 #ifdef _MSC_VER
 #define WINDOWS_LEAN_AND_MEAN
@@ -6,10 +6,10 @@
 #include <realtimeapiset.h>
 #endif
 
-#if FN_USE_FILESYSTEM == 1
+#if HN_USE_FILESYSTEM == 1
 #include <filesystem>
 namespace fs=std::filesystem;
-#elif FN_USE_FILESYSTEM == 2
+#elif HN_USE_FILESYSTEM == 2
 #include <experimental/filesystem>
 #ifdef _MSC_VER
 namespace fs=std::experimental::filesystem::v1;
@@ -28,45 +28,45 @@ namespace chrono=std::chrono;
 
 struct NoiseInfo
 {
-    NoiseInfo(std::string name, FastNoise::NoiseType type):name(name), type(type) {}
+    NoiseInfo(std::string name, HastyNoise::NoiseType type):name(name), type(type) {}
 
     std::string name;
-    FastNoise::NoiseType type;
+    HastyNoise::NoiseType type;
 };
 
 std::vector<NoiseInfo> Noises=
 {
-    {"Value", FastNoise::NoiseType::Value},
-    {"ValueFractal", FastNoise::NoiseType::ValueFractal},
-    {"Perlin", FastNoise::NoiseType::Perlin},
-    {"PerlinFractal", FastNoise::NoiseType::PerlinFractal},
-    {"Simplex", FastNoise::NoiseType::Simplex},
-    {"SimplexFractal", FastNoise::NoiseType::SimplexFractal},
-    {"WhiteNoise", FastNoise::NoiseType::WhiteNoise},
-    {"Cellular", FastNoise::NoiseType::Cellular},
-    {"Cubic", FastNoise::NoiseType::Cubic},
-    {"CubicFractal", FastNoise::NoiseType::CubicFractal}
+    {"Value", HastyNoise::NoiseType::Value},
+    {"ValueFractal", HastyNoise::NoiseType::ValueFractal},
+    {"Perlin", HastyNoise::NoiseType::Perlin},
+    {"PerlinFractal", HastyNoise::NoiseType::PerlinFractal},
+    {"Simplex", HastyNoise::NoiseType::Simplex},
+    {"SimplexFractal", HastyNoise::NoiseType::SimplexFractal},
+    {"WhiteNoise", HastyNoise::NoiseType::WhiteNoise},
+    {"Cellular", HastyNoise::NoiseType::Cellular},
+    {"Cubic", HastyNoise::NoiseType::Cubic},
+    {"CubicFractal", HastyNoise::NoiseType::CubicFractal}
 };
 
 struct SIMDInfo
 {
-    SIMDInfo(std::string name, FastNoise::SIMDType type):name(name), type(type) {}
+    SIMDInfo(std::string name, HastyNoise::SIMDType type):name(name), type(type) {}
 
     std::string name;
-    FastNoise::SIMDType type;
+    HastyNoise::SIMDType type;
 };
 
 std::vector<SIMDInfo> SIMDNames=
 {
-    {"NONE", FastNoise::SIMDType::None},
-    {"NEON", FastNoise::SIMDType::Neon},
-    {"SSE2", FastNoise::SIMDType::SSE2},
-    {"SSE41", FastNoise::SIMDType::SSE4_1},
-    {"AVX2", FastNoise::SIMDType::AVX2},
-    {"AVX512", FastNoise::SIMDType::AVX512}
+    {"NONE", HastyNoise::SIMDType::None},
+    {"NEON", HastyNoise::SIMDType::Neon},
+    {"SSE2", HastyNoise::SIMDType::SSE2},
+    {"SSE41", HastyNoise::SIMDType::SSE4_1},
+    {"AVX2", HastyNoise::SIMDType::AVX2},
+    {"AVX512", HastyNoise::SIMDType::AVX512}
 };
 
-std::string getSimdName(FastNoise::SIMDType type)
+std::string getSimdName(HastyNoise::SIMDType type)
 {
     for(SIMDInfo &info:SIMDNames)
         if(info.type==type)
@@ -126,10 +126,10 @@ int zSize=64;
 
 void generate(size_t highestLevel=0)
 {
-#if FN_USE_FILESYSTEM == 0
+#if HN_USE_FILESYSTEM == 0
     assert(false);
 #else
-    size_t maxLevel=FastNoise::GetFastestSIMD();
+    size_t maxLevel=HastyNoise::GetFastestSIMD();
  
     if(highestLevel>=0)
         maxLevel=std::min(maxLevel, highestLevel);
@@ -146,16 +146,16 @@ void generate(size_t highestLevel=0)
         size_t simdLevel=(size_t)i-1;
 
         //skip neon
-        if(simdLevel==(size_t)FastNoise::SIMDType::Neon)
+        if(simdLevel==(size_t)HastyNoise::SIMDType::Neon)
             continue;
 
-        std::cout<<"SIMD: "<<getSimdName((FastNoise::SIMDType)simdLevel)<<" --------------------------------------------------------\n";
+        std::cout<<"SIMD: "<<getSimdName((HastyNoise::SIMDType)simdLevel)<<" --------------------------------------------------------\n";
 
-        auto noise=FastNoise::CreateNoise(1337, simdLevel);
+        auto noise=HastyNoise::CreateNoise(1337, simdLevel);
 
         if(noise->GetSIMDLevel()!=simdLevel)
         {
-            std::cout<<"Failed to load: "<<getSimdName((FastNoise::SIMDType)simdLevel)<<"\n";
+            std::cout<<"Failed to load: "<<getSimdName((HastyNoise::SIMDType)simdLevel)<<"\n";
             continue;
         }
         
@@ -168,7 +168,7 @@ void generate(size_t highestLevel=0)
             noise->SetNoiseType(info.type);
             noise->FillSet(noiseSet.get(), 0, 0, 0, xSize, ySize, zSize);
 
-            fileName=dataDir.string()+"/"+info.name+"_"+getSimdName((FastNoise::SIMDType)simdLevel)+".ns";
+            fileName=dataDir.string()+"/"+info.name+"_"+getSimdName((HastyNoise::SIMDType)simdLevel)+".ns";
             saveNoise(fileName, noiseSet.get(), xSize, ySize, zSize);
 
             std::cout<<"  complete\n";
@@ -179,7 +179,7 @@ void generate(size_t highestLevel=0)
 
 void checkGenerated()
 {
-#if FN_USE_FILESYSTEM == 0
+#if HN_USE_FILESYSTEM == 0
     assert(false);
 #else
     fs::path dataDir("./data");
@@ -192,7 +192,7 @@ void checkGenerated()
 
     for(NoiseInfo &noiseInfo:Noises)
     {
-        std::vector<FastNoise::FloatBuffer> noiseSets(SIMDNames.size());
+        std::vector<HastyNoise::FloatBuffer> noiseSets(SIMDNames.size());
         size_t index=0;
 
         for(SIMDInfo &simdInfo:SIMDNames)
@@ -206,7 +206,7 @@ void checkGenerated()
                 continue;
             }
 
-            noiseSets[index]=FastNoise::GetEmptySet(xSize, ySize, zSize, (size_t)simdInfo.type);
+            noiseSets[index]=HastyNoise::GetEmptySet(xSize, ySize, zSize, (size_t)simdInfo.type);
             loadNoise(fileName, noiseSets[index].get(), xSize, ySize, zSize);
 
             index++;
@@ -239,8 +239,8 @@ void checkGenerated()
 
 void testPerformance()
 {
-    size_t maxLevel=FastNoise::GetFastestSIMD();
-    std::vector<FastNoise::FloatBuffer> noiseSets(FastNoise::SIMDTypeCount);
+    size_t maxLevel=HastyNoise::GetFastestSIMD();
+    std::vector<HastyNoise::FloatBuffer> noiseSets(HastyNoise::SIMDTypeCount);
 
     for(auto &info:Noises)
     {
@@ -251,21 +251,21 @@ void testPerformance()
             size_t simdLevel=(size_t)i-1;
 
             //skip neon
-            if(simdLevel==(size_t)FastNoise::SIMDType::Neon)
+            if(simdLevel==(size_t)HastyNoise::SIMDType::Neon)
                 continue;
 
-            auto noise=FastNoise::CreateNoise(1337, simdLevel);
+            auto noise=HastyNoise::CreateNoise(1337, simdLevel);
 
             if(noise->GetSIMDLevel()!=simdLevel)
             {
-                std::cout<<"Failed to load: "<<getSimdName((FastNoise::SIMDType)simdLevel)<<"\n";
+                std::cout<<"Failed to load: "<<getSimdName((HastyNoise::SIMDType)simdLevel)<<"\n";
                 continue;
             }
 
             noise->SetNoiseType(info.type);
 
             if(!noiseSets[simdLevel])
-                noiseSets[simdLevel]=FastNoise::GetEmptySet(xSize, ySize, zSize, simdLevel);
+                noiseSets[simdLevel]=HastyNoise::GetEmptySet(xSize, ySize, zSize, simdLevel);
 
             float *noiseSet=noiseSets[simdLevel].get();
 
@@ -280,7 +280,7 @@ void testPerformance()
             endTime=chrono::high_resolution_clock::now();
             double elapsed=chrono::duration_cast<chrono::milliseconds>(endTime-startTime).count();
 
-            std::cout<<"    "<<getSimdName((FastNoise::SIMDType)simdLevel)<<" "<<elapsed<<"ms\n";
+            std::cout<<"    "<<getSimdName((HastyNoise::SIMDType)simdLevel)<<" "<<elapsed<<"ms\n";
         }
     }
 
@@ -290,7 +290,7 @@ void testPerformance()
 
 int main(int argc, char ** argv)
 {
-    FastNoise::loadSimd("./");
+    HastyNoise::loadSimd("./");
     
     int maxLevel=-1;
     bool getMaxLevel=false;
