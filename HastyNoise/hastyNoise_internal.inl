@@ -410,33 +410,33 @@ void gradientCoord(typename SIMD<_SIMDType>::Int seed, const typename SIMD<_SIMD
     typedef Constants<typename SIMD<_SIMDType>::Float, typename SIMD<_SIMDType>::Int, _SIMDType> Constant;
     typename SIMD<_SIMDType>::Int hash=HashHB<_SIMDType>(seed, x, y, z);
 
-    xGrad = SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(SIMD<_SIMDType>::_and(hash, Constant::numi_bit10Mask)), Constant::numf_511_5);
-    yGrad = SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(SIMD<_SIMDType>::_and(SIMD<_SIMDType>::shiftR(hash, 10), Constant::numi_bit10Mask)), Constant::numf_511_5);
-    zGrad = SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(SIMD<_SIMDType>::_and(SIMD<_SIMDType>::shiftR(hash, 20), Constant::numi_bit10Mask)), Constant::numf_511_5); 
+    xGrad=SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(SIMD<_SIMDType>::_and(hash, Constant::numi_bit10Mask)), Constant::numf_511_5);
+    yGrad=SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(SIMD<_SIMDType>::_and(SIMD<_SIMDType>::shiftR(hash, 10), Constant::numi_bit10Mask)), Constant::numf_511_5);
+    zGrad=SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(SIMD<_SIMDType>::_and(SIMD<_SIMDType>::shiftR(hash, 20), Constant::numi_bit10Mask)), Constant::numf_511_5);
 }
 
 template<SIMDType _SIMDType>
 static void VECTORCALL GradientPerturbSingle(typename SIMD<_SIMDType>::Int seed, typename SIMD<_SIMDType>::Float perturbAmp, typename SIMD<_SIMDType>::Float perturbFrequency, typename SIMD<_SIMDType>::Float& x, typename SIMD<_SIMDType>::Float& y, typename SIMD<_SIMDType>::Float& z)
 {
     typedef Constants<typename SIMD<_SIMDType>::Float, typename SIMD<_SIMDType>::Int, _SIMDType> Constant;
-	typename SIMD<_SIMDType>::Float xf = SIMD<_SIMDType>::mulf(x, perturbFrequency);
-	typename SIMD<_SIMDType>::Float yf = SIMD<_SIMDType>::mulf(y, perturbFrequency);
-	typename SIMD<_SIMDType>::Float zf = SIMD<_SIMDType>::mulf(z, perturbFrequency);
+    typename SIMD<_SIMDType>::Float xf=SIMD<_SIMDType>::mulf(x, perturbFrequency);
+    typename SIMD<_SIMDType>::Float yf=SIMD<_SIMDType>::mulf(y, perturbFrequency);
+    typename SIMD<_SIMDType>::Float zf=SIMD<_SIMDType>::mulf(z, perturbFrequency);
 
-	typename SIMD<_SIMDType>::Float xs = SIMD<_SIMDType>::floor(xf);
-	typename SIMD<_SIMDType>::Float ys = SIMD<_SIMDType>::floor(yf);
-	typename SIMD<_SIMDType>::Float zs = SIMD<_SIMDType>::floor(zf);
+    typename SIMD<_SIMDType>::Float xs=SIMD<_SIMDType>::floor(xf);
+    typename SIMD<_SIMDType>::Float ys=SIMD<_SIMDType>::floor(yf);
+    typename SIMD<_SIMDType>::Float zs=SIMD<_SIMDType>::floor(zf);
 
-	typename SIMD<_SIMDType>::Int x0 = SIMD<_SIMDType>::mul(SIMD<_SIMDType>::convert(xs), Constant::numi_xPrime);
-	typename SIMD<_SIMDType>::Int y0 = SIMD<_SIMDType>::mul(SIMD<_SIMDType>::convert(ys), Constant::numi_yPrime);
-	typename SIMD<_SIMDType>::Int z0 = SIMD<_SIMDType>::mul(SIMD<_SIMDType>::convert(zs), Constant::numi_zPrime);
-	typename SIMD<_SIMDType>::Int x1 = SIMD<_SIMDType>::add(x0, Constant::numi_xPrime);
-	typename SIMD<_SIMDType>::Int y1 = SIMD<_SIMDType>::add(y0, Constant::numi_yPrime);
-	typename SIMD<_SIMDType>::Int z1 = SIMD<_SIMDType>::add(z0, Constant::numi_zPrime);
+    typename SIMD<_SIMDType>::Int x0=SIMD<_SIMDType>::mul(SIMD<_SIMDType>::convert(xs), Constant::numi_xPrime);
+    typename SIMD<_SIMDType>::Int y0=SIMD<_SIMDType>::mul(SIMD<_SIMDType>::convert(ys), Constant::numi_yPrime);
+    typename SIMD<_SIMDType>::Int z0=SIMD<_SIMDType>::mul(SIMD<_SIMDType>::convert(zs), Constant::numi_zPrime);
+    typename SIMD<_SIMDType>::Int x1=SIMD<_SIMDType>::add(x0, Constant::numi_xPrime);
+    typename SIMD<_SIMDType>::Int y1=SIMD<_SIMDType>::add(y0, Constant::numi_yPrime);
+    typename SIMD<_SIMDType>::Int z1=SIMD<_SIMDType>::add(z0, Constant::numi_zPrime);
 
-	xs = InterpQuintic<_SIMDType>(SIMD<_SIMDType>::sub(xf, xs));
-	ys = InterpQuintic<_SIMDType>(SIMD<_SIMDType>::sub(yf, ys));
-	zs = InterpQuintic<_SIMDType>(SIMD<_SIMDType>::sub(zf, zs));
+    xs=InterpQuintic<_SIMDType>(SIMD<_SIMDType>::sub(xf, xs));
+    ys=InterpQuintic<_SIMDType>(SIMD<_SIMDType>::sub(yf, ys));
+    zs=InterpQuintic<_SIMDType>(SIMD<_SIMDType>::sub(zf, zs));
 
     typename SIMD<_SIMDType>::Float x000, y000, z000;
     typename SIMD<_SIMDType>::Float x001, y001, z001;
@@ -447,7 +447,7 @@ static void VECTORCALL GradientPerturbSingle(typename SIMD<_SIMDType>::Int seed,
     typename SIMD<_SIMDType>::Float x110, y110, z110;
     typename SIMD<_SIMDType>::Float x111, y111, z111;
 
-	gradientCoord<_SIMDType>(seed, x0, y0, z0, x000, y000, z000);
+    gradientCoord<_SIMDType>(seed, x0, y0, z0, x000, y000, z000);
     gradientCoord<_SIMDType>(seed, x0, y0, z1, x001, y001, z001);
     gradientCoord<_SIMDType>(seed, x0, y1, z0, x010, y010, z010);
     gradientCoord<_SIMDType>(seed, x0, y1, z1, x011, y011, z011);
@@ -456,17 +456,17 @@ static void VECTORCALL GradientPerturbSingle(typename SIMD<_SIMDType>::Int seed,
     gradientCoord<_SIMDType>(seed, x1, y1, z0, x110, y110, z110);
     gradientCoord<_SIMDType>(seed, x1, y1, z1, x111, y111, z111);
 
-	typename SIMD<_SIMDType>::Float x0y = Lerp<_SIMDType>(Lerp<_SIMDType>(x000, x100, xs), Lerp<_SIMDType>(x010, x110, xs), ys);
-	typename SIMD<_SIMDType>::Float y0y = Lerp<_SIMDType>(Lerp<_SIMDType>(y000, y100, xs), Lerp<_SIMDType>(y010, y110, xs), ys);
-	typename SIMD<_SIMDType>::Float z0y = Lerp<_SIMDType>(Lerp<_SIMDType>(z000, z100, xs), Lerp<_SIMDType>(z010, z110, xs), ys);
+    typename SIMD<_SIMDType>::Float x0y=Lerp<_SIMDType>(Lerp<_SIMDType>(x000, x100, xs), Lerp<_SIMDType>(x010, x110, xs), ys);
+    typename SIMD<_SIMDType>::Float y0y=Lerp<_SIMDType>(Lerp<_SIMDType>(y000, y100, xs), Lerp<_SIMDType>(y010, y110, xs), ys);
+    typename SIMD<_SIMDType>::Float z0y=Lerp<_SIMDType>(Lerp<_SIMDType>(z000, z100, xs), Lerp<_SIMDType>(z010, z110, xs), ys);
 
-	typename SIMD<_SIMDType>::Float x1y = Lerp<_SIMDType>(Lerp<_SIMDType>(x001, x101, xs), Lerp<_SIMDType>(x011, x111, xs), ys);
-	typename SIMD<_SIMDType>::Float y1y = Lerp<_SIMDType>(Lerp<_SIMDType>(y001, y101, xs), Lerp<_SIMDType>(y011, y111, xs), ys);
-	typename SIMD<_SIMDType>::Float z1y = Lerp<_SIMDType>(Lerp<_SIMDType>(z001, z101, xs), Lerp<_SIMDType>(z011, z111, xs), ys);
+    typename SIMD<_SIMDType>::Float x1y=Lerp<_SIMDType>(Lerp<_SIMDType>(x001, x101, xs), Lerp<_SIMDType>(x011, x111, xs), ys);
+    typename SIMD<_SIMDType>::Float y1y=Lerp<_SIMDType>(Lerp<_SIMDType>(y001, y101, xs), Lerp<_SIMDType>(y011, y111, xs), ys);
+    typename SIMD<_SIMDType>::Float z1y=Lerp<_SIMDType>(Lerp<_SIMDType>(z001, z101, xs), Lerp<_SIMDType>(z011, z111, xs), ys);
 
-	x = SIMD<_SIMDType>::mulAdd(Lerp<_SIMDType>(x0y, x1y, zs), perturbAmp, x);
-	y = SIMD<_SIMDType>::mulAdd(Lerp<_SIMDType>(y0y, y1y, zs), perturbAmp, y);
-	z = SIMD<_SIMDType>::mulAdd(Lerp<_SIMDType>(z0y, z1y, zs), perturbAmp, z);
+    x=SIMD<_SIMDType>::mulAdd(Lerp<_SIMDType>(x0y, x1y, zs), perturbAmp, x);
+    y=SIMD<_SIMDType>::mulAdd(Lerp<_SIMDType>(y0y, y1y, zs), perturbAmp, y);
+    z=SIMD<_SIMDType>::mulAdd(Lerp<_SIMDType>(z0y, z1y, zs), perturbAmp, z);
 }
 
 template<SIMDType _SIMDType>
@@ -474,11 +474,11 @@ NoiseSIMD<_SIMDType>::NoiseSIMD(int seed)
 {
     InitSIMDValues<_SIMDType>::_();
 
-    m_noiseDetails.seed = seed;
-    m_noiseDetails.fractalBounding = CalculateFractalBounding(m_noiseDetails.octaves, m_noiseDetails.gain);
-	m_perturbDetails.FractalBounding = CalculateFractalBounding(m_perturbDetails.Octaves, m_perturbDetails.Gain);
+    m_noiseDetails.seed=seed;
+    m_noiseDetails.fractalBounding=CalculateFractalBounding(m_noiseDetails.octaves, m_noiseDetails.gain);
+    m_perturbDetails.FractalBounding=CalculateFractalBounding(m_perturbDetails.Octaves, m_perturbDetails.Gain);
 
-    m_SIMDLevel= SIMD<_SIMDType>::level();
+    m_SIMDLevel=SIMD<_SIMDType>::level();
 }
 
 template<SIMDType _SIMDType>
@@ -491,29 +491,29 @@ template<SIMDType _SIMDType>
 size_t NoiseSIMD<_SIMDType>::AlignedSize(size_t size)
 {
 #ifdef HN_ALIGNED_SETS
-	// size must be a multiple of SIMD<_SIMDType>::vectorSize() (8)
-	if ((size & (SIMD<_SIMDType>::vectorSize() - 1)) != 0)
-	{
-		size &= ~(SIMD<_SIMDType>::vectorSize() - 1);
-		size += SIMD<_SIMDType>::vectorSize();
-	}
+    // size must be a multiple of SIMD<_SIMDType>::vectorSize() (8)
+    if((size & (SIMD<_SIMDType>::vectorSize()-1))!=0)
+    {
+        size&=~(SIMD<_SIMDType>::vectorSize()-1);
+        size+=SIMD<_SIMDType>::vectorSize();
+    }
 #endif
-	return size;
+    return size;
 }
 
 template<SIMDType _SIMDType>
 float* NoiseSIMD<_SIMDType>::GetEmptySet(size_t size)
 {
-	size = AlignedSize(size);
+    size=AlignedSize(size);
 
-	float* noiseSet;
+    float* noiseSet;
     noiseSet=simdAlloc<_SIMDType>::_(size);
 
-	return noiseSet;
+    return noiseSet;
 }
 
 template<SIMDType _SIMDType>
-void axisReset(typename SIMD<_SIMDType>::Int &x, typename SIMD<_SIMDType>::Int &y, typename SIMD<_SIMDType>::Int &z, 
+void axisReset(typename SIMD<_SIMDType>::Int &x, typename SIMD<_SIMDType>::Int &y, typename SIMD<_SIMDType>::Int &z,
     const typename SIMD<_SIMDType>::Int &ySizeV, const typename SIMD<_SIMDType>::Int &yEndV, const typename SIMD<_SIMDType>::Int &zSizeV, const typename SIMD<_SIMDType>::Int &zEndV, int &_zSize, int _start)
 {
     typedef Constants<typename SIMD<_SIMDType>::Float, typename SIMD<_SIMDType>::Int, _SIMDType> Constant;
@@ -524,7 +524,7 @@ void axisReset(typename SIMD<_SIMDType>::Int &x, typename SIMD<_SIMDType>::Int &
 
         y=SIMD<_SIMDType>::maskAdd(_zReset, y, Constant::numi_1);
         z=SIMD<_SIMDType>::maskSub(_zReset, z, zSizeV);
-            
+
         typename SIMD<_SIMDType>::Mask _yReset=SIMD<_SIMDType>::greaterThan(y, yEndV);
 
         x=SIMD<_SIMDType>::maskAdd(_yReset, x, Constant::numi_1);
@@ -581,7 +581,7 @@ NoiseValues<_SIMDType> initNoise(const NoiseDetails &noiseDetails, float scaleMo
     noise.cellularLookupFrequencyV=SIMD<_SIMDType>::set(noiseDetails.cellularNoiseLookupFrequency);
 
     noise.octaves=noiseDetails.octaves;
-    
+
     return noise;
 };
 
@@ -722,17 +722,17 @@ struct Perturb<_SIMDType, PerturbType::GradientFractal>
         typename SIMD<_SIMDType>::Int seedF=SIMD<_SIMDType>::sub(seedV, Constant::numi_1);
         typename SIMD<_SIMDType>::Float freqF=perturb.FreqV;
         typename SIMD<_SIMDType>::Float ampF=perturb.AmpV;
-    
+
         GradientPerturbSingle<_SIMDType>(seedF, ampF, freqF, xF, yF, zF);
-    
+
         int octaveIndex=0;
-    
+
         while(++octaveIndex < perturb.Octaves)
         {
             freqF=SIMD<_SIMDType>::mulf(freqF, perturb.LacunarityV);
             seedF=SIMD<_SIMDType>::sub(seedF, Constant::numi_1);
             ampF=SIMD<_SIMDType>::mulf(ampF, perturb.GainV);
-        
+
             GradientPerturbSingle<_SIMDType>(seedF, ampF, freqF, xF, yF, zF);
         }
     }
@@ -772,17 +772,17 @@ struct Perturb<_SIMDType, PerturbType::GradientFractal_Normalise>
         typename SIMD<_SIMDType>::Int seedF=SIMD<_SIMDType>::sub(seedV, Constant::numi_1);
         typename SIMD<_SIMDType>::Float freqF=perturb.FreqV;
         typename SIMD<_SIMDType>::Float ampF=perturb.AmpV;
-    
+
         GradientPerturbSingle<_SIMDType>(seedF, ampF, freqF, xF, yF, zF);
-    
-        int octaveIndex=0; 
-    
+
+        int octaveIndex=0;
+
         while(++octaveIndex < perturb.Octaves)
         {
             freqF=SIMD<_SIMDType>::mulf(freqF, perturb.LacunarityV);
             seedF=SIMD<_SIMDType>::sub(seedF, Constant::numi_1);
             ampF=SIMD<_SIMDType>::mulf(ampF, perturb.GainV);
-        
+
             GradientPerturbSingle<_SIMDType>(seedF, ampF, freqF, xF, yF, zF);
         }
         typename SIMD<_SIMDType>::Float invMag=SIMD<_SIMDType>::mulf(perturb.NormaliseLengthV, SIMD<_SIMDType>::invSqrt(SIMD<_SIMDType>::mulAdd(xF, xF, SIMD<_SIMDType>::mulAdd(yF, yF, SIMD<_SIMDType>::mulf(zF, zF)))));
@@ -958,73 +958,73 @@ template<SIMDType _SIMDType, CellularDistance _CellularDistance>
 static typename SIMD<_SIMDType>::Float VECTORCALL CellularValueSingle(typename SIMD<_SIMDType>::Int seed, typename SIMD<_SIMDType>::Float x, typename SIMD<_SIMDType>::Float y, typename SIMD<_SIMDType>::Float z, typename SIMD<_SIMDType>::Float cellJitter)
 {
     typedef Constants<typename SIMD<_SIMDType>::Float, typename SIMD<_SIMDType>::Int, _SIMDType> Constant;
-	typename SIMD<_SIMDType>::Float distance = Constant::numf_999999;
-	typename SIMD<_SIMDType>::Float cellValue = SIMD<_SIMDType>::undefinedFloat();
-	
-	typename SIMD<_SIMDType>::Int xc     = SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(x), Constant::numi_1);
-	typename SIMD<_SIMDType>::Int ycBase = SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(y), Constant::numi_1);
-	typename SIMD<_SIMDType>::Int zcBase = SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(z), Constant::numi_1);
-	
-	typename SIMD<_SIMDType>::Float xcf     = SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(xc), x);
-	typename SIMD<_SIMDType>::Float ycfBase = SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(ycBase), y);
-	typename SIMD<_SIMDType>::Float zcfBase = SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(zcBase), z);
-	
-	xc     = SIMD<_SIMDType>::mul(xc, Constant::numi_xPrime);
-	ycBase = SIMD<_SIMDType>::mul(ycBase, Constant::numi_yPrime);
-	zcBase = SIMD<_SIMDType>::mul(zcBase, Constant::numi_zPrime);
-	
-	for (int xi = 0; xi < 3; xi++)
-	{
-		typename SIMD<_SIMDType>::Float ycf = ycfBase;
-		typename SIMD<_SIMDType>::Int yc = ycBase;
-		for (int yi = 0; yi < 3; yi++)
-		{
-			typename SIMD<_SIMDType>::Float zcf = zcfBase;
-			typename SIMD<_SIMDType>::Int zc = zcBase;
-			for (int zi = 0; zi < 3; zi++)
-			{
-				typename SIMD<_SIMDType>::Int hash = HashHB<_SIMDType>(seed, xc, yc, zc);
-				typename SIMD<_SIMDType>::Float xd = SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(SIMD<_SIMDType>::_and(hash, Constant::numi_bit10Mask)), Constant::numf_511_5);
-				typename SIMD<_SIMDType>::Float yd = SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(SIMD<_SIMDType>::_and(SIMD<_SIMDType>::shiftR(hash,10), Constant::numi_bit10Mask)), Constant::numf_511_5);
-				typename SIMD<_SIMDType>::Float zd = SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(SIMD<_SIMDType>::_and(SIMD<_SIMDType>::shiftR(hash,20), Constant::numi_bit10Mask)), Constant::numf_511_5);
-				
-				typename SIMD<_SIMDType>::Float invMag = SIMD<_SIMDType>::mulf(cellJitter, SIMD<_SIMDType>::invSqrt(SIMD<_SIMDType>::mulAdd(xd, xd, SIMD<_SIMDType>::mulAdd(yd, yd, SIMD<_SIMDType>::mulf(zd, zd)))));
-				
-				xd = SIMD<_SIMDType>::mulAdd(xd, invMag, xcf);
-				yd = SIMD<_SIMDType>::mulAdd(yd, invMag, ycf);
-				zd = SIMD<_SIMDType>::mulAdd(zd, invMag, zcf);
-				
-				typename SIMD<_SIMDType>::Float newCellValue = SIMD<_SIMDType>::mulf(Constant::numf_hash2Float, SIMD<_SIMDType>::convert(hash));
-				typename SIMD<_SIMDType>::Float newDistance = Distance<_SIMDType, _CellularDistance>(xd, yd, zd);
-				
-				typename SIMD<_SIMDType>::Mask closer = SIMD<_SIMDType>::lessThan(newDistance, distance);
-				
-				distance = SIMD<_SIMDType>::min(newDistance, distance);
-				cellValue = SIMD<_SIMDType>::blend(cellValue, newCellValue, closer);
-				
-				zcf = SIMD<_SIMDType>::add(zcf, Constant::numf_1);
-				zc = SIMD<_SIMDType>::add(zc, Constant::numi_zPrime);
-			}
-			ycf = SIMD<_SIMDType>::add(ycf, Constant::numf_1);
-			yc = SIMD<_SIMDType>::add(yc, Constant::numi_yPrime);
-		}
-		xcf = SIMD<_SIMDType>::add(xcf, Constant::numf_1);
-		xc = SIMD<_SIMDType>::add(xc, Constant::numi_xPrime);
-	}
-	
-	return cellValue;
+    typename SIMD<_SIMDType>::Float distance=Constant::numf_999999;
+    typename SIMD<_SIMDType>::Float cellValue=SIMD<_SIMDType>::undefinedFloat();
+
+    typename SIMD<_SIMDType>::Int xc=SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(x), Constant::numi_1);
+    typename SIMD<_SIMDType>::Int ycBase=SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(y), Constant::numi_1);
+    typename SIMD<_SIMDType>::Int zcBase=SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(z), Constant::numi_1);
+
+    typename SIMD<_SIMDType>::Float xcf=SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(xc), x);
+    typename SIMD<_SIMDType>::Float ycfBase=SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(ycBase), y);
+    typename SIMD<_SIMDType>::Float zcfBase=SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(zcBase), z);
+
+    xc=SIMD<_SIMDType>::mul(xc, Constant::numi_xPrime);
+    ycBase=SIMD<_SIMDType>::mul(ycBase, Constant::numi_yPrime);
+    zcBase=SIMD<_SIMDType>::mul(zcBase, Constant::numi_zPrime);
+
+    for(int xi=0; xi < 3; xi++)
+    {
+        typename SIMD<_SIMDType>::Float ycf=ycfBase;
+        typename SIMD<_SIMDType>::Int yc=ycBase;
+        for(int yi=0; yi < 3; yi++)
+        {
+            typename SIMD<_SIMDType>::Float zcf=zcfBase;
+            typename SIMD<_SIMDType>::Int zc=zcBase;
+            for(int zi=0; zi < 3; zi++)
+            {
+                typename SIMD<_SIMDType>::Int hash=HashHB<_SIMDType>(seed, xc, yc, zc);
+                typename SIMD<_SIMDType>::Float xd=SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(SIMD<_SIMDType>::_and(hash, Constant::numi_bit10Mask)), Constant::numf_511_5);
+                typename SIMD<_SIMDType>::Float yd=SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(SIMD<_SIMDType>::_and(SIMD<_SIMDType>::shiftR(hash, 10), Constant::numi_bit10Mask)), Constant::numf_511_5);
+                typename SIMD<_SIMDType>::Float zd=SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(SIMD<_SIMDType>::_and(SIMD<_SIMDType>::shiftR(hash, 20), Constant::numi_bit10Mask)), Constant::numf_511_5);
+
+                typename SIMD<_SIMDType>::Float invMag=SIMD<_SIMDType>::mulf(cellJitter, SIMD<_SIMDType>::invSqrt(SIMD<_SIMDType>::mulAdd(xd, xd, SIMD<_SIMDType>::mulAdd(yd, yd, SIMD<_SIMDType>::mulf(zd, zd)))));
+
+                xd=SIMD<_SIMDType>::mulAdd(xd, invMag, xcf);
+                yd=SIMD<_SIMDType>::mulAdd(yd, invMag, ycf);
+                zd=SIMD<_SIMDType>::mulAdd(zd, invMag, zcf);
+
+                typename SIMD<_SIMDType>::Float newCellValue=SIMD<_SIMDType>::mulf(Constant::numf_hash2Float, SIMD<_SIMDType>::convert(hash));
+                typename SIMD<_SIMDType>::Float newDistance=Distance<_SIMDType, _CellularDistance>(xd, yd, zd);
+
+                typename SIMD<_SIMDType>::Mask closer=SIMD<_SIMDType>::lessThan(newDistance, distance);
+
+                distance=SIMD<_SIMDType>::min(newDistance, distance);
+                cellValue=SIMD<_SIMDType>::blend(cellValue, newCellValue, closer);
+
+                zcf=SIMD<_SIMDType>::add(zcf, Constant::numf_1);
+                zc=SIMD<_SIMDType>::add(zc, Constant::numi_zPrime);
+            }
+            ycf=SIMD<_SIMDType>::add(ycf, Constant::numf_1);
+            yc=SIMD<_SIMDType>::add(yc, Constant::numi_yPrime);
+        }
+        xcf=SIMD<_SIMDType>::add(xcf, Constant::numf_1);
+        xc=SIMD<_SIMDType>::add(xc, Constant::numi_xPrime);
+    }
+
+    return cellValue;
 }
 
 template<SIMDType _SIMDType>
 struct NoiseLookupSettings
 {
-	NoiseType type;
-	typename SIMD<_SIMDType>::Float frequency;
-	FractalType fractalType;
-	int fractalOctaves;
-	typename SIMD<_SIMDType>::Float fractalLacunarity;
-	typename SIMD<_SIMDType>::Float fractalGain;
-	typename SIMD<_SIMDType>::Float fractalBounding;
+    NoiseType type;
+    typename SIMD<_SIMDType>::Float frequency;
+    FractalType fractalType;
+    int fractalOctaves;
+    typename SIMD<_SIMDType>::Float fractalLacunarity;
+    typename SIMD<_SIMDType>::Float fractalGain;
+    typename SIMD<_SIMDType>::Float fractalBounding;
 };
 
 //template<SIMDType _SIMDType, NoiseType _NoiseType, FractalType _FractalType>
@@ -1040,118 +1040,130 @@ struct NoiseLookupSettings
 
 
 
-template<SIMDType _SIMDType, CellularDistance _CellularDistance>
+template<SIMDType _SIMDType, CellularDistance _CellularDistance, bool _CalcCellValue>
 static typename SIMD<_SIMDType>::Float VECTORCALL CellularDistanceSingle(typename SIMD<_SIMDType>::Int seed, typename SIMD<_SIMDType>::Float x, typename SIMD<_SIMDType>::Float y, typename SIMD<_SIMDType>::Float z, typename SIMD<_SIMDType>::Float cellJitter)
 {
     typedef Constants<typename SIMD<_SIMDType>::Float, typename SIMD<_SIMDType>::Int, _SIMDType> Constant;
-	typename SIMD<_SIMDType>::Float distance = Constant::numf_999999;
-	
-	typename SIMD<_SIMDType>::Int xc     = SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(x), Constant::numi_1);
-	typename SIMD<_SIMDType>::Int ycBase = SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(y), Constant::numi_1);
-	typename SIMD<_SIMDType>::Int zcBase = SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(z), Constant::numi_1);
-	
-	typename SIMD<_SIMDType>::Float xcf     = SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(xc), x);
-	typename SIMD<_SIMDType>::Float ycfBase = SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(ycBase), y);
-	typename SIMD<_SIMDType>::Float zcfBase = SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(zcBase), z);
-	
-	xc     = SIMD<_SIMDType>::mul(xc, Constant::numi_xPrime);
-	ycBase = SIMD<_SIMDType>::mul(ycBase, Constant::numi_yPrime);
-	zcBase = SIMD<_SIMDType>::mul(zcBase, Constant::numi_zPrime);
-	
-	for (int xi = 0; xi < 3; xi++)
-	{
-		typename SIMD<_SIMDType>::Float ycf = ycfBase;
-		typename SIMD<_SIMDType>::Int yc = ycBase;
-		for (int yi = 0; yi < 3; yi++)
-		{
-			typename SIMD<_SIMDType>::Float zcf = zcfBase;
-			typename SIMD<_SIMDType>::Int zc = zcBase;
-			for (int zi = 0; zi < 3; zi++)
-			{
-				typename SIMD<_SIMDType>::Int hash = HashHB<_SIMDType>(seed, xc, yc, zc);
-				typename SIMD<_SIMDType>::Float xd = SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(SIMD<_SIMDType>::_and(hash, Constant::numi_bit10Mask)), Constant::numf_511_5);
-				typename SIMD<_SIMDType>::Float yd = SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(SIMD<_SIMDType>::_and(SIMD<_SIMDType>::shiftR(hash,10), Constant::numi_bit10Mask)), Constant::numf_511_5);
-				typename SIMD<_SIMDType>::Float zd = SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(SIMD<_SIMDType>::_and(SIMD<_SIMDType>::shiftR(hash,20), Constant::numi_bit10Mask)), Constant::numf_511_5);
-				
-				typename SIMD<_SIMDType>::Float invMag = SIMD<_SIMDType>::mulf(cellJitter, SIMD<_SIMDType>::invSqrt(SIMD<_SIMDType>::mulAdd(xd, xd, SIMD<_SIMDType>::mulAdd(yd, yd, SIMD<_SIMDType>::mulf(zd, zd)))));
-				
-				xd = SIMD<_SIMDType>::mulAdd(xd, invMag, xcf);
-				yd = SIMD<_SIMDType>::mulAdd(yd, invMag, ycf);
-				zd = SIMD<_SIMDType>::mulAdd(zd, invMag, zcf);
-				
-				typename SIMD<_SIMDType>::Float newDistance = Distance<_SIMDType, _CellularDistance>::_(xd, yd, zd);
-				
-				distance = SIMD<_SIMDType>::min(distance, newDistance);
-				
-				zcf = SIMD<_SIMDType>::add(zcf, Constant::numf_1);
-				zc = SIMD<_SIMDType>::add(zc, Constant::numi_zPrime);
-			}
-			ycf = SIMD<_SIMDType>::add(ycf, Constant::numf_1);
-			yc = SIMD<_SIMDType>::add(yc, Constant::numi_yPrime);
-		}
-		xcf = SIMD<_SIMDType>::add(xcf, Constant::numf_1);
-		xc = SIMD<_SIMDType>::add(xc, Constant::numi_xPrime);
-	}
-	
-	return distance;
+    typename SIMD<_SIMDType>::Float distance=Constant::numf_999999;
+    typename SIMD<_SIMDType>::Float cellValue;
+        
+    if(_CalcCellValue)
+        cellValue=Constant::numf_0;
+
+    typename SIMD<_SIMDType>::Int xc=SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(x), Constant::numi_1);
+    typename SIMD<_SIMDType>::Int ycBase=SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(y), Constant::numi_1);
+    typename SIMD<_SIMDType>::Int zcBase=SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(z), Constant::numi_1);
+
+    typename SIMD<_SIMDType>::Float xcf=SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(xc), x);
+    typename SIMD<_SIMDType>::Float ycfBase=SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(ycBase), y);
+    typename SIMD<_SIMDType>::Float zcfBase=SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(zcBase), z);
+
+    xc=SIMD<_SIMDType>::mul(xc, Constant::numi_xPrime);
+    ycBase=SIMD<_SIMDType>::mul(ycBase, Constant::numi_yPrime);
+    zcBase=SIMD<_SIMDType>::mul(zcBase, Constant::numi_zPrime);
+
+    for(int xi=0; xi < 3; xi++)
+    {
+        typename SIMD<_SIMDType>::Float ycf=ycfBase;
+        typename SIMD<_SIMDType>::Int yc=ycBase;
+        for(int yi=0; yi < 3; yi++)
+        {
+            typename SIMD<_SIMDType>::Float zcf=zcfBase;
+            typename SIMD<_SIMDType>::Int zc=zcBase;
+            for(int zi=0; zi < 3; zi++)
+            {
+                typename SIMD<_SIMDType>::Int hash=HashHB<_SIMDType>(seed, xc, yc, zc);
+                typename SIMD<_SIMDType>::Float xd=SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(SIMD<_SIMDType>::_and(hash, Constant::numi_bit10Mask)), Constant::numf_511_5);
+                typename SIMD<_SIMDType>::Float yd=SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(SIMD<_SIMDType>::_and(SIMD<_SIMDType>::shiftR(hash, 10), Constant::numi_bit10Mask)), Constant::numf_511_5);
+                typename SIMD<_SIMDType>::Float zd=SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(SIMD<_SIMDType>::_and(SIMD<_SIMDType>::shiftR(hash, 20), Constant::numi_bit10Mask)), Constant::numf_511_5);
+
+                typename SIMD<_SIMDType>::Float invMag=SIMD<_SIMDType>::mulf(cellJitter, SIMD<_SIMDType>::invSqrt(SIMD<_SIMDType>::mulAdd(xd, xd, SIMD<_SIMDType>::mulAdd(yd, yd, SIMD<_SIMDType>::mulf(zd, zd)))));
+
+                xd=SIMD<_SIMDType>::mulAdd(xd, invMag, xcf);
+                yd=SIMD<_SIMDType>::mulAdd(yd, invMag, ycf);
+                zd=SIMD<_SIMDType>::mulAdd(zd, invMag, zcf);
+
+                typename SIMD<_SIMDType>::Float newDistance=Distance<_SIMDType, _CellularDistance>::_(xd, yd, zd);
+                if(_CalcCellValue)
+                {
+                    typename SIMD<_SIMDType>::Float newCellValue=SIMD<_SIMDType>::mulf(Constant::numf_hash2Float, SIMD<_SIMDType>::convert(hash));
+                    typename SIMD<_SIMDType>::Mask closer=SIMD<_SIMDType>::lessThan(newDistance, distance);
+                    cellValue=SIMD<_SIMDType>::blend(cellValue, newCellValue, closer);
+                }
+
+                distance=SIMD<_SIMDType>::min(distance, newDistance);
+
+                zcf=SIMD<_SIMDType>::add(zcf, Constant::numf_1);
+                zc=SIMD<_SIMDType>::add(zc, Constant::numi_zPrime);
+            }
+            ycf=SIMD<_SIMDType>::add(ycf, Constant::numf_1);
+            yc=SIMD<_SIMDType>::add(yc, Constant::numi_yPrime);
+        }
+        xcf=SIMD<_SIMDType>::add(xcf, Constant::numf_1);
+        xc=SIMD<_SIMDType>::add(xc, Constant::numi_xPrime);
+    }
+
+    if(_CalcCellValue)
+        return cellValue;
+    return distance;
 }
 
 template<SIMDType _SIMDType, CellularDistance _CellularDistance, CellularReturnType _CellularReturnType>
 static typename SIMD<_SIMDType>::Float VECTORCALL CellularReturnDistanceSingle(typename SIMD<_SIMDType>::Int seed, typename SIMD<_SIMDType>::Float x, typename SIMD<_SIMDType>::Float y, typename SIMD<_SIMDType>::Float z, typename SIMD<_SIMDType>::Float cellJitter, int index0, int index1)
 {
     typedef Constants<typename SIMD<_SIMDType>::Float, typename SIMD<_SIMDType>::Int, _SIMDType> Constant;
-	typename SIMD<_SIMDType>::Float distance[HN_CELLULAR_INDEX_MAX+1] = {Constant::numf_999999,Constant::numf_999999,Constant::numf_999999,Constant::numf_999999};
-	
-	typename SIMD<_SIMDType>::Int xc     = SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(x), Constant::numi_1);
-	typename SIMD<_SIMDType>::Int ycBase = SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(y), Constant::numi_1);
-	typename SIMD<_SIMDType>::Int zcBase = SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(z), Constant::numi_1);
-	
-	typename SIMD<_SIMDType>::Float xcf     = SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(xc), x);
-	typename SIMD<_SIMDType>::Float ycfBase = SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(ycBase), y);
-	typename SIMD<_SIMDType>::Float zcfBase = SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(zcBase), z);
-	
-	xc     = SIMD<_SIMDType>::mul(xc, Constant::numi_xPrime);
-	ycBase = SIMD<_SIMDType>::mul(ycBase, Constant::numi_yPrime);
-	zcBase = SIMD<_SIMDType>::mul(zcBase, Constant::numi_zPrime);
-	
-	for (int xi = 0; xi < 3; xi++)
-	{
-		typename SIMD<_SIMDType>::Float ycf = ycfBase;
-		typename SIMD<_SIMDType>::Int yc = ycBase;
-		for (int yi = 0; yi < 3; yi++)
-		{
-			typename SIMD<_SIMDType>::Float zcf = zcfBase;
-			typename SIMD<_SIMDType>::Int zc = zcBase;
-			for (int zi = 0; zi < 3; zi++)
-			{
-				typename SIMD<_SIMDType>::Int hash = HashHB<_SIMDType>(seed, xc, yc, zc);
-				typename SIMD<_SIMDType>::Float xd = SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(SIMD<_SIMDType>::_and(hash, Constant::numi_bit10Mask)), Constant::numf_511_5);
-				typename SIMD<_SIMDType>::Float yd = SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(SIMD<_SIMDType>::_and(SIMD<_SIMDType>::shiftR(hash,10), Constant::numi_bit10Mask)), Constant::numf_511_5);
-				typename SIMD<_SIMDType>::Float zd = SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(SIMD<_SIMDType>::_and(SIMD<_SIMDType>::shiftR(hash,20), Constant::numi_bit10Mask)), Constant::numf_511_5);
-				
-				typename SIMD<_SIMDType>::Float invMag = SIMD<_SIMDType>::mulf(cellJitter, SIMD<_SIMDType>::invSqrt(SIMD<_SIMDType>::mulAdd(xd, xd, SIMD<_SIMDType>::mulAdd(yd, yd, SIMD<_SIMDType>::mulf(zd, zd)))));
-				
-				xd = SIMD<_SIMDType>::mulAdd(xd, invMag, xcf);
-				yd = SIMD<_SIMDType>::mulAdd(yd, invMag, ycf);
-				zd = SIMD<_SIMDType>::mulAdd(zd, invMag, zcf);
-				
-				typename SIMD<_SIMDType>::Float newDistance = Distance<_SIMDType, _CellularDistance>::_(xd, yd, zd);
-				
-				for(int i = index1; i > 0; i--)
-					distance[i] = SIMD<_SIMDType>::max(SIMD<_SIMDType>::min(distance[i], newDistance), distance[i-1]);
-				distance[0] = SIMD<_SIMDType>::min(distance[0], newDistance);
-				
-				zcf = SIMD<_SIMDType>::add(zcf, Constant::numf_1);
-				zc = SIMD<_SIMDType>::add(zc, Constant::numi_zPrime);
-			}
-			ycf = SIMD<_SIMDType>::add(ycf, Constant::numf_1);
-			yc = SIMD<_SIMDType>::add(yc, Constant::numi_yPrime);
-		}
-		xcf = SIMD<_SIMDType>::add(xcf, Constant::numf_1);
-		xc = SIMD<_SIMDType>::add(xc, Constant::numi_xPrime);
-	}
-	
-	return ReturnDistance<_SIMDType, _CellularReturnType>::_(distance[index0], distance[index1]);
+    typename SIMD<_SIMDType>::Float distance[HN_CELLULAR_INDEX_MAX+1]={Constant::numf_999999,Constant::numf_999999,Constant::numf_999999,Constant::numf_999999};
+
+    typename SIMD<_SIMDType>::Int xc=SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(x), Constant::numi_1);
+    typename SIMD<_SIMDType>::Int ycBase=SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(y), Constant::numi_1);
+    typename SIMD<_SIMDType>::Int zcBase=SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(z), Constant::numi_1);
+
+    typename SIMD<_SIMDType>::Float xcf=SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(xc), x);
+    typename SIMD<_SIMDType>::Float ycfBase=SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(ycBase), y);
+    typename SIMD<_SIMDType>::Float zcfBase=SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(zcBase), z);
+
+    xc=SIMD<_SIMDType>::mul(xc, Constant::numi_xPrime);
+    ycBase=SIMD<_SIMDType>::mul(ycBase, Constant::numi_yPrime);
+    zcBase=SIMD<_SIMDType>::mul(zcBase, Constant::numi_zPrime);
+
+    for(int xi=0; xi < 3; xi++)
+    {
+        typename SIMD<_SIMDType>::Float ycf=ycfBase;
+        typename SIMD<_SIMDType>::Int yc=ycBase;
+        for(int yi=0; yi < 3; yi++)
+        {
+            typename SIMD<_SIMDType>::Float zcf=zcfBase;
+            typename SIMD<_SIMDType>::Int zc=zcBase;
+            for(int zi=0; zi < 3; zi++)
+            {
+                typename SIMD<_SIMDType>::Int hash=HashHB<_SIMDType>(seed, xc, yc, zc);
+                typename SIMD<_SIMDType>::Float xd=SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(SIMD<_SIMDType>::_and(hash, Constant::numi_bit10Mask)), Constant::numf_511_5);
+                typename SIMD<_SIMDType>::Float yd=SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(SIMD<_SIMDType>::_and(SIMD<_SIMDType>::shiftR(hash, 10), Constant::numi_bit10Mask)), Constant::numf_511_5);
+                typename SIMD<_SIMDType>::Float zd=SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(SIMD<_SIMDType>::_and(SIMD<_SIMDType>::shiftR(hash, 20), Constant::numi_bit10Mask)), Constant::numf_511_5);
+
+                typename SIMD<_SIMDType>::Float invMag=SIMD<_SIMDType>::mulf(cellJitter, SIMD<_SIMDType>::invSqrt(SIMD<_SIMDType>::mulAdd(xd, xd, SIMD<_SIMDType>::mulAdd(yd, yd, SIMD<_SIMDType>::mulf(zd, zd)))));
+
+                xd=SIMD<_SIMDType>::mulAdd(xd, invMag, xcf);
+                yd=SIMD<_SIMDType>::mulAdd(yd, invMag, ycf);
+                zd=SIMD<_SIMDType>::mulAdd(zd, invMag, zcf);
+
+                typename SIMD<_SIMDType>::Float newDistance=Distance<_SIMDType, _CellularDistance>::_(xd, yd, zd);
+
+                for(int i=index1; i > 0; i--)
+                    distance[i]=SIMD<_SIMDType>::max(SIMD<_SIMDType>::min(distance[i], newDistance), distance[i-1]);
+                distance[0]=SIMD<_SIMDType>::min(distance[0], newDistance);
+
+                zcf=SIMD<_SIMDType>::add(zcf, Constant::numf_1);
+                zc=SIMD<_SIMDType>::add(zc, Constant::numi_zPrime);
+            }
+            ycf=SIMD<_SIMDType>::add(ycf, Constant::numf_1);
+            yc=SIMD<_SIMDType>::add(yc, Constant::numi_yPrime);
+        }
+        xcf=SIMD<_SIMDType>::add(xcf, Constant::numf_1);
+        xc=SIMD<_SIMDType>::add(xc, Constant::numi_xPrime);
+    }
+
+    return ReturnDistance<_SIMDType, _CellularReturnType>::_(distance[index0], distance[index1]);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1202,7 +1214,7 @@ struct GetValue<_SIMDType, _NoiseType, _FractalType, _CellularDistance, Cellular
 {
     template<typename ..._Types>
     static typename SIMD<_SIMDType>::Float _(const NoiseValues<_SIMDType> &noise, typename SIMD<_SIMDType>::Float &xF, typename SIMD<_SIMDType>::Float &yF, typename SIMD<_SIMDType>::Float &zF)
-    { return CellularDistanceSingle<_SIMDType, _CellularDistance>(noise.seedV, xF, yF, zF, noise.cellJitterV); }
+    { return CellularDistanceSingle<_SIMDType, _CellularDistance, true>(noise.seedV, xF, yF, zF, noise.cellJitterV); }
 };
 
 template<SIMDType _SIMDType, NoiseType _NoiseType, FractalType _FractalType, CellularDistance _CellularDistance>
@@ -1210,7 +1222,7 @@ struct GetValue<_SIMDType, _NoiseType, _FractalType, _CellularDistance, Cellular
 {
     template<typename ..._Types>
     static typename SIMD<_SIMDType>::Float _(const NoiseValues<_SIMDType> &noise, typename SIMD<_SIMDType>::Float &xF, typename SIMD<_SIMDType>::Float &yF, typename SIMD<_SIMDType>::Float &zF)
-    { return CellularDistanceSingle<_SIMDType, _CellularDistance>(noise.seedV, xF, yF, zF, noise.cellJitterV); }
+    { return CellularDistanceSingle<_SIMDType, _CellularDistance, false>(noise.seedV, xF, yF, zF, noise.cellJitterV); }
 };
 
 
@@ -1516,7 +1528,7 @@ static void CallBuildFractal(NoiseType noiseType, PerturbType perturbType, Fract
     switch(fractalType)
     {
     case FractalType::None:
-//        CallBuild<_SIMDType, _BuildType, FractalType::None, _cellularDistance, _cellularReturnType, _LookupNoiseType>(noiseType, perturbType, args...);
+        //        CallBuild<_SIMDType, _BuildType, FractalType::None, _cellularDistance, _cellularReturnType, _LookupNoiseType>(noiseType, perturbType, args...);
         break;
     case FractalType::FBM:
         CallBuild<_SIMDType, _BuildType, FractalType::FBM, _cellularDistance, _cellularReturnType, _LookupNoiseType>(noiseType, perturbType, args...);
@@ -1565,7 +1577,7 @@ static void CallBuildCellularLookup(NoiseType noiseType, PerturbType perturbType
         CallBuildFractal<_SIMDType, _BuildType, CellularDistance::Manhattan, _CellularReturnType, _lookupNoiseType>(noiseType, perturbType, fractalType, args...);
         break;
     case CellularDistance::Natural:
-        CallBuildFractal<_SIMDType, _BuildType, CellularDistance::Natural, _CellularReturnType, _lookupNoiseType>(noiseType, perturbType, fractalType,args...);
+        CallBuildFractal<_SIMDType, _BuildType, CellularDistance::Natural, _CellularReturnType, _lookupNoiseType>(noiseType, perturbType, fractalType, args...);
         break;
     }
 }
@@ -1641,7 +1653,7 @@ static void CallBuildCellular(NoiseType noiseType, PerturbType perturbType, Frac
         CallBuildCellular<_SIMDType, _BuildType, CellularReturnType::Distance2Div>(cellularDistance, args...);
         break;
     case CellularReturnType::NoiseLookup:
-//        CallBuildCellularLookup<_SIMDType, _BuildType, CellularReturnType::NoiseLookup>(noiseType, perturbType, fractalType, cellularDistance, lookupNoiseType, args...);
+        //        CallBuildCellularLookup<_SIMDType, _BuildType, CellularReturnType::NoiseLookup>(noiseType, perturbType, fractalType, cellularDistance, lookupNoiseType, args...);
         break;
     case CellularReturnType::Distance2Cave:
         CallBuildCellular<_SIMDType, _BuildType, CellularReturnType::Distance2Cave>(cellularDistance, args...);
@@ -1654,7 +1666,7 @@ static void CallBuild(NoiseType noiseType, PerturbType perturbType, FractalType 
 {
     if(noiseType==NoiseType::Cellular)
     {
-        if(cellularReturnType == CellularReturnType::NoiseLookup)
+        if(cellularReturnType==CellularReturnType::NoiseLookup)
             CallBuildCellularLookup<_SIMDType, _BuildType, CellularReturnType::NoiseLookup>(noiseType, perturbType, fractalType, cellularDistance, lookupNoiseType, args...);
         else
             CallBuildCellular<_SIMDType, _BuildType>(noiseType, perturbType, fractalType, cellularDistance, cellularReturnType, lookupNoiseType, args...);

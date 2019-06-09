@@ -30,6 +30,7 @@
 #define HASTYNOISE_H
 
 #include "hastyNoise_export.h"
+#include "hastyNoise_enums.h"
 
 #include <memory>
 #include <vector>
@@ -113,17 +114,74 @@ AMD Piledriver - 2012
 AVX-512F
 Intel Skylake-X - Q2 2017
 */
-enum class NoiseType { None, Value, ValueFractal, Perlin, PerlinFractal, Simplex, SimplexFractal, WhiteNoise, Cellular, Cubic, CubicFractal };
-enum class FractalType { None, FBM, Billow, RigidMulti };
-enum class PerturbType { None, Gradient, GradientFractal, Normalise, Gradient_Normalise, GradientFractal_Normalise };
-enum class CellularDistance { None, Euclidean, Manhattan, Natural };
-enum class CellularReturnType { None, Value, Distance, Distance2, Distance2Add, Distance2Sub, Distance2Mul, Distance2Div, NoiseLookup, Distance2Cave };
+//enum class NoiseType { None, Value, ValueFractal, Perlin, PerlinFractal, Simplex, SimplexFractal, WhiteNoise, Cellular, Cubic, CubicFractal };
+//
+//struct NoiseInfo
+//{
+//    NoiseInfo(std::string name, HastyNoise::NoiseType type):name(name), type(type) {}
+//
+//    std::string name;
+//    HastyNoise::NoiseType type;
+//};
+//
+//static std::vector<NoiseInfo> NoiseNames=
+//{
+//    {"Value", HastyNoise::NoiseType::Value},
+//    {"ValueFractal", HastyNoise::NoiseType::ValueFractal},
+//    {"Perlin", HastyNoise::NoiseType::Perlin},
+//    {"PerlinFractal", HastyNoise::NoiseType::PerlinFractal},
+//    {"Simplex", HastyNoise::NoiseType::Simplex},
+//    {"SimplexFractal", HastyNoise::NoiseType::SimplexFractal},
+//    {"WhiteNoise", HastyNoise::NoiseType::WhiteNoise},
+//    {"Cellular", HastyNoise::NoiseType::Cellular},
+//    {"Cubic", HastyNoise::NoiseType::Cubic},
+//    {"CubicFractal", HastyNoise::NoiseType::CubicFractal}
+//};
+//
+//inline std::string getNoiseName(HastyNoise::NoiseType type)
+//{
+//    for(NoiseInfo &info:NoiseNames)
+//        if(info.type==type)
+//            return info.name;
+//    return std::string("Unknown");
+//}
 
-constexpr size_t SIMDTypeCount=6;
-enum class SIMDType { None, Neon, SSE2, SSE4_1, AVX2, AVX512 };
+//enum class FractalType { None, FBM, Billow, RigidMulti };
+//enum class PerturbType { None, Gradient, GradientFractal, Normalise, Gradient_Normalise, GradientFractal_Normalise };
+//enum class CellularDistance { None, Euclidean, Manhattan, Natural };
+//enum class CellularReturnType { None, Value, Distance, Distance2, Distance2Add, Distance2Sub, Distance2Mul, Distance2Div, NoiseLookup, Distance2Cave };
 
-enum class NoiseClass {Single, Fractal, Cellular};
-enum class BuildType {Default, Map, Vector };
+//constexpr size_t SIMDTypeCount=6;
+//enum class SIMDType { None=0, Neon=1, SSE2=2, SSE4_1=3, AVX2=4, AVX512=5 };
+//
+//struct SIMDInfo
+//{
+//    SIMDInfo(std::string name, HastyNoise::SIMDType type):name(name), type(type) {}
+//
+//    std::string name;
+//    HastyNoise::SIMDType type;
+//};
+//
+//static std::vector<SIMDInfo> SIMDNames=
+//{
+//    {"None", HastyNoise::SIMDType::None},
+//    {"Neon", HastyNoise::SIMDType::Neon},
+//    {"SSE2", HastyNoise::SIMDType::SSE2},
+//    {"SSE41", HastyNoise::SIMDType::SSE4_1},
+//    {"AVX2", HastyNoise::SIMDType::AVX2},
+//    {"AVX512", HastyNoise::SIMDType::AVX512}
+//};
+//
+//inline std::string getSimdName(HastyNoise::SIMDType type)
+//{
+//    for(SIMDInfo &info:SIMDNames)
+//        if(info.type==type)
+//            return info.name;
+//    return std::string("Unknown");
+//}
+//
+//enum class NoiseClass {Single, Fractal, Cellular};
+//enum class BuildType {Default, Map, Vector };
 
 struct HASTYNOISE_EXPORT NoiseDetails
 {
@@ -226,21 +284,23 @@ inline float *GetEmptySet(size_t xSize, size_t ySize, size_t zSize, size_t simdL
 }//namespace details
 
 // Returns highest detected level of CPU support
-// 5: ARM NEON
-// 4: AVX-512F
-// 3: AVX2 & FMA3
-// 2: SSE4.1
-// 1: SSE2
+// 5: AVX-512F
+// 4: AVX2 & FMA3
+// 3: SSE4.1
+// 2: SSE2
+// 1: ARM NEON
 // 0: Fallback, no SIMD support
 //size_t GetSIMDLevel(void);
 HASTYNOISE_EXPORT size_t GetFastestSIMD();
 
+HASTYNOISE_EXPORT bool SupportedSimd(SIMDType type);
+
 // Creates new NoiseSIMD for the highest supported instuction set of the CPU 
-// 5: ARM NEON
-// 4: AVX-512F
-// 3: AVX2 & FMA3
-// 2: SSE4.1
-// 1: SSE2
+// 5: AVX-512F
+// 4: AVX2 & FMA3
+// 3: SSE4.1
+// 2: SSE2
+// 1: ARM NEON
 // 0: Fallback, no SIMD support
 // -1: Auto-detect fastest supported (Default)
 // Caution: Setting this manually can cause crashes on CPUs that do not support that level
@@ -377,6 +437,10 @@ public:
     void SetAxisScales(float xScale, float yScale, float zScale) { m_noiseDetails.xScale=xScale; m_noiseDetails.yScale=yScale; m_noiseDetails.zScale=zScale; }
 
 
+    //	// Sets fractal type for noise that supports it
+    //	// Default: FBM
+    void SetFractalType(FractalType fractalType) { m_fractalType=fractalType; }
+
     // Sets octave count for all fractal noise types
     // Default: 3
     void SetFractalOctaves(int octaves) { m_noiseDetails.octaves=octaves; m_noiseDetails.fractalBounding=CalculateFractalBounding(m_noiseDetails.octaves, m_noiseDetails.gain); }
@@ -388,6 +452,14 @@ public:
     // Sets octave gain for all fractal noise types
     // Default: 0.5
     void SetFractalGain(float gain) { m_noiseDetails.gain=gain; m_noiseDetails.fractalBounding=CalculateFractalBounding(m_noiseDetails.octaves, m_noiseDetails.gain); }
+
+    // Sets distance function used in cellular noise calculations
+    // Default: Euclidean
+    void SetCellularDistanceFunction(CellularDistance cellularDistance) { m_cellularDistance=cellularDistance; }
+
+    // Sets return type from cellular noise calculations
+    // Default: Distance
+    void SetCellularReturnType(CellularReturnType cellularReturnType) { m_cellularReturnType=cellularReturnType; }
 
     // Sets relative frequency on the cellular noise lookup return type
     // Default: 0.2

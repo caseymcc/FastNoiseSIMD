@@ -209,6 +209,19 @@ size_t GetFastestSIMD()
 }
 #endif
 
+bool SupportedSimd(SIMDType type)
+{
+    size_t level=(size_t)type;
+
+    if((level<0)||(level>=SIMDTypeCount))
+        return false;
+
+    if(s_noiseSimds[level].createFunc)
+        return true;
+
+    return false;
+}
+
 size_t AlignedSize(size_t size, size_t simdLevel)
 {
     if(simdLevel>=s_noiseSimds.size())
@@ -293,7 +306,7 @@ bool loadSimd(std::string libPath)
         std::string fileName=filePath.filename().string();
         std::string extension=filePath.extension().string();
 
-        if(fs::is_regular_file(*iter) && extension==libExtension && fileName.compare(0, 10, "hastyNoise_")==0)
+        if(fs::is_regular_file(*iter) && extension==libExtension && fileName.compare(0, 11, "hastyNoise_")==0)
         {
 #if defined(_WIN32) || defined(_WIN64)
             HINSTANCE instance=NULL;

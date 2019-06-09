@@ -4,10 +4,25 @@ string(COMPARE EQUAL "$ENV{TRAVIS}" "true" is_travis)
 string(COMPARE EQUAL "$ENV{APPVEYOR}" "True" is_appveyor)
 
 option(HN_FAST_INVSQRT "Use fast inverse sqrt" OFF)
+option(HN_PREVIEW_APP "Build preview app" ON)
 
 if(is_travis OR is_appveyor)
     set(HN_BUILD_APP ON) #force building app on CI
+    set(HN_PREVIEW_APP OFF CACHE BOOL "Build preview app" FORCE) #don't need for CI
 endif()
+
+message(STATUS "is_travis: ${is_travis}")
+message(STATUS "is_appveyor: ${is_appveyor}")
+message(STATUS "HN_BUILD_APP: ${HN_BUILD_APP}")
+message(STATUS "HN_PREVIEW_APP: ${HN_PREVIEW_APP}")
+
+include(${CMAKE_CURRENT_LIST_DIR}/cmake/Hunter/HunterGate.cmake)
+
+HunterGate(
+    URL "https://github.com/ruslo/hunter/archive/v0.23.181.tar.gz"
+    SHA1 "270cafa2d67def4ad4d52409ff22a28890d41c84"
+    LOCAL
+)
 
 project(HastyNoise VERSION 0.8.0)
 
@@ -20,6 +35,9 @@ if(MSVC)
 
     #need to sync pdp files
     add_compile_options("/FS")
+else()
+    #requires c++17 for inline static variable support
+    set(CMAKE_CXX_STANDARD 17)
 endif()
 
 set(HN_SIMD_SSE2 OFF)
@@ -109,6 +127,7 @@ set(hastyNoise_sources
 
 set(hastyNoise_headers
     HastyNoise/hastyNoise.h
+    HastyNoise/hastyNoise_enums.h
     HastyNoise/hastyNoise_internal.h
     HastyNoise/hastyNoise_internal.inl
     HastyNoise/simd_constants.inl
@@ -267,6 +286,29 @@ if(HN_BUILD_APP)
     endif()
     if(HN_SIMD_AVX512)
         add_dependencies(hastyNoiseApp hastyNoise_avx512)
+    endif()
+endif()
+
+if(HN_PREVIEW_APP)
+    hunter_add_package(glfw)
+    find_package(glfw3 REQUIRED)
+    hunter_add_package(imgui)
+    find_package(imgui CONFIG REQUIRED)
+
+    add_executable(hastyPreviewApp preview/main.cpp)
+    target_link_libraries(hastyPreviewApp hastyNoise glfw imgui::imgui)
+
+    if(HN_SIMD_SSE2)
+        add_dependencies(hastyPreviewApp hastyNoise_sse2)
+    endif()
+    if(HN_SIMD_SSE41)
+        add_dependencies(hastyPreviewApp hastyNoise_sse41)
+    endif()
+    if(HN_SIMD_AVX2)
+        add_dependencies(hastyPreviewApp hastyNoise_avx2)
+    endif()
+    if(HN_SIMD_AVX512)
+        add_dependencies(hastyPreviewApp hastyNoise_avx512)
     endif()
 endif()
 

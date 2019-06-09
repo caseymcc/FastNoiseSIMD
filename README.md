@@ -55,6 +55,11 @@ The library compiles a shared library for each of the SIMD instructions sets. Du
 - [FastNoise](https://github.com/Auburns/FastNoise)
 - [CubicNoise](https://github.com/jobtalle/CubicNoise)
 
+# Preview
+Repo now includes a preview app that uses dear imgui to render various different types of noise.
+
+![preview](https://github.com/caseymcc/HastyNoise/raw/master/examples/preview_perlinfractal.png)
+
 # Performance Comparisons
 Timings below timings are to generate 100x 64x64x64 (~26.2M) points of noise on a single thread.
 
@@ -69,3 +74,12 @@ Timings below timings are to generate 100x 64x64x64 (~26.2M) points of noise on 
 | Simplex     |        |  198ms |  372ms |  474ms |    2769ms |
 | Cellular    |        |  915ms | 2095ms | 2218ms |   16388ms |
 | Cubic       |        |  668ms | 1370ms | 2336ms |    5698ms |
+
+# Examples
+![preview](https://github.com/caseymcc/HastyNoise/raw/master/examples/preview_simplexfractal.png)
+![preview](https://github.com/caseymcc/HastyNoise/raw/master/examples/preview_simplexfractal_billow.png)
+![preview](https://github.com/caseymcc/HastyNoise/raw/master/examples/preview_cellularvalue.png)
+![preview](https://github.com/caseymcc/HastyNoise/raw/master/examples/preview_cellulardistance2add.png)
+![preview](https://github.com/caseymcc/HastyNoise/raw/master/examples/preview_cellulardistance2div_inv.png)
+![preview](https://github.com/caseymcc/HastyNoise/raw/master/examples/preview_value.png)
+![preview](https://github.com/caseymcc/HastyNoise/raw/master/examples/preview_whitenoise.png)
