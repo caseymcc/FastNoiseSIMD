@@ -128,6 +128,10 @@ set(hastyNoise_sources
 set(hastyNoise_headers
     HastyNoise/hastyNoise.h
     HastyNoise/hastyNoise_enums.h
+    HastyNoise/hastyNoise_export.h
+)
+
+set(hastyNoise_inline
     HastyNoise/hastyNoise_internal.h
     HastyNoise/hastyNoise_internal.inl
     HastyNoise/simd_constants.inl
@@ -138,6 +142,7 @@ set(hastyNoise_headers
 add_library(hastyNoise SHARED
     ${hastyNoise_sources}
     ${hastyNoise_headers}
+    ${hastyNoise_inline}
 )
 set(library_targets ${library_targets} hastyNoise)
 
@@ -368,7 +373,7 @@ install(
 
 # Headers:
 install(
-    FILES "HastyNoise/hastyNoise.h" "HastyNoise/hastyNoise_export.h"
+    FILES ${hastyNoise_headers}
     DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}"
 )
 
