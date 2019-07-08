@@ -121,6 +121,8 @@ message(STATUS "HN_SIMD_SSE41: ${HN_SIMD_SSE41}")
 message(STATUS "HN_SIMD_AVX2: ${HN_SIMD_AVX2}")
 message(STATUS "HN_SIMD_AVX512: ${HN_SIMD_AVX512}")
 
+set(hastyNoise_external_lib)
+
 set(hastyNoise_sources
     HastyNoise/hastyNoise.cpp
     HastyNoise/hastyNoise_none.cpp
@@ -171,6 +173,7 @@ if(HN_USE_FILESYSTEM EQUAL ${HN_NO_FILESYSTEM})
     hunter_add_package(Boost COMPONENTS filesystem)
     find_package(Boost CONFIG REQUIRED filesystem)
 
+    list(APPEND hastyNoise_external_lib Boost::filesystem)
     target_link_libraries(hastyNoise Boost::filesystem)
 endif()
 
@@ -325,6 +328,23 @@ if(HN_PREVIEW_APP)
     if(HN_SIMD_AVX512)
         add_dependencies(hastyPreviewApp hastyNoise_avx512)
     endif()
+
+    #create launcher that will include hunter paths
+    hunter_add_package(CreateLaunchers)
+    find_package(CreateLaunchers CONFIG REQUIRED)
+
+    include(CreateLaunchers)
+
+    set(hastyPreviewApp_enviroment_dir)
+    foreach(target ${hastyNoise_external_lib})
+        list(APPEND hastyPreviewApp_enviroment_dir "$<TARGET_FILE_DIR:${target}>")
+    endforeach()
+    set(hastyPreviewApp_working_dir ${CMAKE_CURRENT_LIST_DIR})
+
+    create_target_launcher(hastyPreviewApp
+        RUNTIME_LIBRARY_DIRS "${hastyPreviewApp_enviroment_dir}"
+        WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
+    )
 endif()
 
 
