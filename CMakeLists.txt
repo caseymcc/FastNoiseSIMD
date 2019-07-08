@@ -4,10 +4,11 @@ string(COMPARE EQUAL "$ENV{TRAVIS}" "true" is_travis)
 string(COMPARE EQUAL "$ENV{APPVEYOR}" "True" is_appveyor)
 
 option(HN_FAST_INVSQRT "Use fast inverse sqrt" OFF)
+option(HN_BUILD_APP "Build test app" OFF)
 option(HN_PREVIEW_APP "Build preview app" ON)
 
 if(is_travis OR is_appveyor)
-    set(HN_BUILD_APP ON) #force building app on CI
+    set(HN_BUILD_APP ON CACHE BOOL "Build test app" FORCE) #force building app on CI
     set(HN_PREVIEW_APP OFF CACHE BOOL "Build preview app" FORCE) #don't need for CI
 endif()
 
@@ -155,9 +156,10 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     target_compile_options(hastyNoise PUBLIC "/bigobj")
 elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
     target_compile_options(hastyNoise PUBLIC "-ldl")
+    target_link_libraries(hastyNoise ${CMAKE_DL_LIBS})
     if(HN_USE_FILESYSTEM GREATER 0)
         target_compile_options(hastyNoise PUBLIC "-lstdc++fs")
-        target_link_libraries(hastyNoise stdc++fs ${CMAKE_DL_LIBS})
+        target_link_libraries(hastyNoise stdc++fs)
     endif()
     if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" AND is_travis)
         target_compile_options(hastyNoise PUBLIC "-Wno-ignored-attributes") #gcc warnings are mean to travis logs
