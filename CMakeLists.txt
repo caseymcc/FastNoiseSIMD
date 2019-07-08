@@ -165,6 +165,13 @@ elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_CXX_COMPILER_ID}"
 endif()
 #target_include_directories(hastyNoise PUBLIC ${CMAKE_CURRENT_LIST_DIR})
 
+if(HN_USE_FILESYSTEM EQUAL ${HN_NO_FILESYSTEM})
+    hunter_add_package(Boost COMPONENTS filesystem)
+    find_package(Boost CONFIG REQUIRED filesystem)
+
+    target_link_libraries(hastyNoise Boost::filesystem)
+endif()
+
 if(HN_SIMD_SSE2)
     set(hastyNoise_sse2_sources
         HastyNoise/hastyNoise_sse2.cpp
@@ -301,6 +308,7 @@ if(HN_PREVIEW_APP)
     find_package(imgui CONFIG REQUIRED)
 
     add_executable(hastyPreviewApp preview/main.cpp)
+    target_include_directories(hastyPreviewApp PRIVATE ${CMAKE_CURRENT_LIST_DIR})
     target_link_libraries(hastyPreviewApp hastyNoise glfw imgui::imgui)
 
     if(HN_SIMD_SSE2)

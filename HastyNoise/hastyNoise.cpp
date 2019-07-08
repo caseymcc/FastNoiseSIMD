@@ -53,8 +53,10 @@
 #include "inttypes.h"
 #endif
 
-
-#if HN_USE_FILESYSTEM == 1
+#if HN_USE_FILESYSTEM == 0
+#include <boost/filesystem.hpp>
+namespace fs=boost::filesystem;
+#elif HN_USE_FILESYSTEM == 1
 #include <filesystem>
 namespace fs=std::filesystem;
 #elif HN_USE_FILESYSTEM == 2
@@ -281,21 +283,27 @@ void FreeNoiseSet(float *floatArray, size_t level)
 
 bool loadSimd(std::string libPath)
 {
-#if HN_USE_FILESYSTEM == 0
-    assert(false);
-    return false;
-#else
+//#if HN_USE_FILESYSTEM == 0
+//    assert(false);
+//    return false;
+//#else
     fs::path directory(libPath);
 
     if(!fs::exists(directory)||!fs::is_directory(directory))
         return false;
 
     std::string libExtension;
+    std::string libPrefix;
 
 #if defined(_WIN32) || defined(_WIN64)
     libExtension=".dll";
+    libPrefix="hastyNoise_";
+#elif defined(__APPLE__)
+    libExtension=".dylib";
+    libPrefix="libhastyNoise_";
 #else
     libExtension=".so";
+    libPrefix="libhastyNoise_";
 #endif
     fs::directory_iterator iter(directory);
     fs::directory_iterator endIter;
@@ -306,7 +314,7 @@ bool loadSimd(std::string libPath)
         std::string fileName=filePath.filename().string();
         std::string extension=filePath.extension().string();
 
-        if(fs::is_regular_file(*iter) && extension==libExtension && fileName.compare(0, 11, "hastyNoise_")==0)
+        if(fs::is_regular_file(*iter) && extension==libExtension && fileName.compare(0, libPrefix.size(), libPrefix.c_str())==0)
         {
 #if defined(_WIN32) || defined(_WIN64)
             HINSTANCE instance=NULL;
@@ -361,7 +369,7 @@ bool loadSimd(std::string libPath)
     }
 
     return true;
-#endif
+//#endif
 }
 
 void FillVectorSet(VectorSet* vectorSet, int xSize, int ySize, int zSize)
