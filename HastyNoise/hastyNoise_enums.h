@@ -91,6 +91,7 @@ inline bool isFractal(NoiseType type)
 {
     switch(type)
     {
+    case HastyNoise::NoiseType::None:
     case HastyNoise::NoiseType::Value:
     case HastyNoise::NoiseType::Perlin:
     case HastyNoise::NoiseType::Simplex:

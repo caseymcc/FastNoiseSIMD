@@ -96,7 +96,7 @@ int getIndexFromType(std::vector<std::string> &items, _Type type)
 
 int main(int argc, char ** argv)
 {
-    HastyNoise::loadSimd("./");
+    HastyNoise::loadSimd();
 
     // Setup window
     glfwSetErrorCallback(error_callback);
