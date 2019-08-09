@@ -314,12 +314,10 @@ int phdr_callback(struct dl_phdr_info *info, size_t size, void *data)
 }
 #endif
 
-bool loadSimd(std::string libPath)
+bool loadSimd(const char *path)
 {
-    //#if HN_USE_FILESYSTEM == 0
-    //    assert(false);
-    //    return false;
-    //#else
+    std::string libPath(path);
+
     if(libPath.empty())
     {//find where we are loaded from and look in that directory
         libPath="./";
@@ -469,7 +467,6 @@ bool loadSimd(std::string libPath)
     }
 
     return true;
-    //#endif
 }
 
 void FillVectorSet(VectorSet* vectorSet, int xSize, int ySize, int zSize)

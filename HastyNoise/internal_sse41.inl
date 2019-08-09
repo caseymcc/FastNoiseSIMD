@@ -26,4 +26,4 @@ struct SIMD<SIMDType::SSE4_1>:SIMD<SIMDType::SSE2>
 #endif
 
 }//namespace details
-}//namespace FastNoise
+}//namespace HastyNoise

@@ -264,7 +264,7 @@ struct HASTYNOISE_EXPORT NoiseFuncs
 
 
 // Loads all available simd libraries from directory
-HASTYNOISE_EXPORT bool loadSimd(std::string directory="");
+HASTYNOISE_EXPORT bool loadSimd(const char *path="");
 
 
 namespace details
