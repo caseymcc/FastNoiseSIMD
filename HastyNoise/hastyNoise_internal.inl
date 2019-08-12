@@ -1482,22 +1482,22 @@ static void CallBuildFractal(NoiseType noiseType, PerturbType perturbType, Fract
     }
 }
 
-template<SIMDType _SIMDType, BuildType _BuildType, CellularReturnType _CellularReturnType, typename... _Types>
+template<SIMDType _SIMDType, BuildType _BuildType, PerturbType _PerturbType, CellularReturnType _CellularReturnType, typename... _Types>
 static void CallBuildCellular(CellularDistance cellularDistance, _Types... args)
 {
     switch(cellularDistance)
     {
     case CellularDistance::None:
-        Build<_SIMDType, NoiseType::Cellular, PerturbType::None, FractalType::None, CellularDistance::None, _CellularReturnType, NoiseType::None, _BuildType>::_(args...);
+        Build<_SIMDType, NoiseType::Cellular, _PerturbType, FractalType::None, CellularDistance::None, _CellularReturnType, NoiseType::None, _BuildType>::_(args...);
         break;
     case CellularDistance::Euclidean:
-        Build<_SIMDType, NoiseType::Cellular, PerturbType::None, FractalType::None, CellularDistance::Euclidean, _CellularReturnType, NoiseType::None, _BuildType>::_(args...);
+        Build<_SIMDType, NoiseType::Cellular, _PerturbType, FractalType::None, CellularDistance::Euclidean, _CellularReturnType, NoiseType::None, _BuildType>::_(args...);
         break;
     case CellularDistance::Manhattan:
-        Build<_SIMDType, NoiseType::Cellular, PerturbType::None, FractalType::None, CellularDistance::Manhattan, _CellularReturnType, NoiseType::None, _BuildType>::_(args...);
+        Build<_SIMDType, NoiseType::Cellular, _PerturbType, FractalType::None, CellularDistance::Manhattan, _CellularReturnType, NoiseType::None, _BuildType>::_(args...);
         break;
     case CellularDistance::Natural:
-        Build<_SIMDType, NoiseType::Cellular, PerturbType::None, FractalType::None, CellularDistance::Natural, _CellularReturnType, NoiseType::None, _BuildType>::_(args...);
+        Build<_SIMDType, NoiseType::Cellular, _PerturbType, FractalType::None, CellularDistance::Natural, _CellularReturnType, NoiseType::None, _BuildType>::_(args...);
         break;
     }
 }
@@ -1563,43 +1563,69 @@ static void CallBuildCellularLookup(NoiseType noiseType, PerturbType perturbType
     }
 }
 
-template<SIMDType _SIMDType, BuildType _BuildType, typename... _Types>
-static void CallBuildCellular(NoiseType noiseType, PerturbType perturbType, FractalType fractalType, CellularDistance cellularDistance, CellularReturnType cellularReturnType, NoiseType lookupNoiseType, _Types... args)
+template<SIMDType _SIMDType, BuildType _BuildType, PerturbType _PerturbType, typename... _Types>
+static void CallBuildCellular(CellularDistance cellularDistance, CellularReturnType cellularReturnType, NoiseType lookupNoiseType, _Types... args)
 {
     switch(cellularReturnType)
     {
     case CellularReturnType::None:
-        CallBuildCellular<_SIMDType, _BuildType, CellularReturnType::None>(cellularDistance, args...);
+        CallBuildCellular<_SIMDType, _BuildType, _PerturbType, CellularReturnType::None>(cellularDistance, args...);
         break;
     case CellularReturnType::Value:
-        CallBuildCellular<_SIMDType, _BuildType, CellularReturnType::Value>(cellularDistance, args...);
+        CallBuildCellular<_SIMDType, _BuildType, _PerturbType, CellularReturnType::Value>(cellularDistance, args...);
         break;
     case CellularReturnType::Distance:
-        CallBuildCellular<_SIMDType, _BuildType, CellularReturnType::Distance>(cellularDistance, args...);
+        CallBuildCellular<_SIMDType, _BuildType, _PerturbType, CellularReturnType::Distance>(cellularDistance, args...);
         break;
     case CellularReturnType::ValueDistance2:
-        CallBuildCellular<_SIMDType, _BuildType, CellularReturnType::ValueDistance2>(cellularDistance, args...);
+        CallBuildCellular<_SIMDType, _BuildType, _PerturbType, CellularReturnType::ValueDistance2>(cellularDistance, args...);
         break;
     case CellularReturnType::Distance2:
-        CallBuildCellular<_SIMDType, _BuildType, CellularReturnType::Distance2>(cellularDistance, args...);
+        CallBuildCellular<_SIMDType, _BuildType, _PerturbType, CellularReturnType::Distance2>(cellularDistance, args...);
         break;
     case CellularReturnType::Distance2Add:
-        CallBuildCellular<_SIMDType, _BuildType, CellularReturnType::Distance2Add>(cellularDistance, args...);
+        CallBuildCellular<_SIMDType, _BuildType, _PerturbType, CellularReturnType::Distance2Add>(cellularDistance, args...);
         break;
     case CellularReturnType::Distance2Sub:
-        CallBuildCellular<_SIMDType, _BuildType, CellularReturnType::Distance2Sub>(cellularDistance, args...);
+        CallBuildCellular<_SIMDType, _BuildType, _PerturbType, CellularReturnType::Distance2Sub>(cellularDistance, args...);
         break;
     case CellularReturnType::Distance2Mul:
-        CallBuildCellular<_SIMDType, _BuildType, CellularReturnType::Distance2Mul>(cellularDistance, args...);
+        CallBuildCellular<_SIMDType, _BuildType, _PerturbType, CellularReturnType::Distance2Mul>(cellularDistance, args...);
         break;
     case CellularReturnType::Distance2Div:
-        CallBuildCellular<_SIMDType, _BuildType, CellularReturnType::Distance2Div>(cellularDistance, args...);
+        CallBuildCellular<_SIMDType, _BuildType, _PerturbType, CellularReturnType::Distance2Div>(cellularDistance, args...);
         break;
     case CellularReturnType::NoiseLookup:
         //        CallBuildCellularLookup<_SIMDType, _BuildType, CellularReturnType::NoiseLookup>(noiseType, perturbType, fractalType, cellularDistance, lookupNoiseType, args...);
         break;
     case CellularReturnType::Distance2Cave:
-        CallBuildCellular<_SIMDType, _BuildType, CellularReturnType::Distance2Cave>(cellularDistance, args...);
+        CallBuildCellular<_SIMDType, _BuildType, _PerturbType, CellularReturnType::Distance2Cave>(cellularDistance, args...);
+        break;
+    }
+}
+
+template<SIMDType _SIMDType, BuildType _BuildType, typename... _Types>
+static void CallBuildCellular(PerturbType perturbType, CellularDistance cellularDistance, CellularReturnType cellularReturnType, NoiseType lookupNoiseType, _Types... args)
+{
+    switch(perturbType)
+    {
+    case PerturbType::None:
+        CallBuildCellular<_SIMDType, _BuildType, PerturbType::None>(cellularDistance, cellularReturnType, lookupNoiseType, args...);
+        break;
+    case PerturbType::Gradient:
+        CallBuildCellular<_SIMDType, _BuildType, PerturbType::Gradient>(cellularDistance, cellularReturnType, lookupNoiseType, args...);
+        break;
+    case PerturbType::GradientFractal:
+        CallBuildCellular<_SIMDType, _BuildType, PerturbType::GradientFractal>(cellularDistance, cellularReturnType, lookupNoiseType, args...);
+        break;
+    case PerturbType::Normalise:
+        CallBuildCellular<_SIMDType, _BuildType, PerturbType::Normalise>(cellularDistance, cellularReturnType, lookupNoiseType, args...);
+        break;
+    case PerturbType::Gradient_Normalise:
+        CallBuildCellular<_SIMDType, _BuildType, PerturbType::Gradient_Normalise>(cellularDistance, cellularReturnType, lookupNoiseType, args...);
+        break;
+    case PerturbType::GradientFractal_Normalise:
+        CallBuildCellular<_SIMDType, _BuildType, PerturbType::GradientFractal_Normalise>(cellularDistance, cellularReturnType, lookupNoiseType, args...);
         break;
     }
 }
@@ -1612,7 +1638,7 @@ static void CallBuild(NoiseType noiseType, PerturbType perturbType, FractalType 
         if(cellularReturnType==CellularReturnType::NoiseLookup)
             CallBuildCellularLookup<_SIMDType, _BuildType, CellularReturnType::NoiseLookup>(noiseType, perturbType, fractalType, cellularDistance, lookupNoiseType, args...);
         else
-            CallBuildCellular<_SIMDType, _BuildType>(noiseType, perturbType, fractalType, cellularDistance, cellularReturnType, lookupNoiseType, args...);
+            CallBuildCellular<_SIMDType, _BuildType>(perturbType, cellularDistance, cellularReturnType, lookupNoiseType, args...);
     }
     else if((noiseType==NoiseType::ValueFractal)||(noiseType==NoiseType::PerlinFractal)||(noiseType==NoiseType::SimplexFractal)||(noiseType==NoiseType::CubicFractal))
         CallBuildFractal<_SIMDType, _BuildType, CellularDistance::None, CellularReturnType::None, NoiseType::None>(noiseType, perturbType, fractalType, args...);

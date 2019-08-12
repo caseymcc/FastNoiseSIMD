@@ -177,6 +177,18 @@ int main(int argc, char ** argv)
     std::vector<std::string> cellularReturnTypes;
     std::vector<char> cellularReturnTypesPacked=getTypeNamesPacked<HastyNoise::CellularReturnType>(cellularReturnTypes);
     
+    HastyNoise::PerturbType currentPerturbType=HastyNoise::PerturbType::None;
+    std::vector<std::string> perturbTypes;
+    std::vector<char> perturbTypesPacked=getTypeNamesPacked<HastyNoise::PerturbType>(perturbTypes);
+
+    float noisePerturbAmp=1.0f;
+    float noisePerturbFrequency=0.5f;
+    int noisePerturbOctaves=3;
+    float noisePerturbLacunarity=2.0f;
+    float noisePerturbGain=0.5f;
+    float noisePerturbNormaliseLength=1.0f;
+
+
     bool noiseTextureDirty=false;
     bool noiseTextureValid=false;
     
@@ -325,6 +337,17 @@ int main(int argc, char ** argv)
                 noiseBufferDirty=false;
             }
 
+            noise->SetPerturbType(currentPerturbType);
+            if(currentPerturbType!=HastyNoise::PerturbType::None)
+            {
+                noise->SetPerturbAmp(noisePerturbAmp);
+                noise->SetPerturbFrequency(noisePerturbFrequency);
+                noise->SetPerturbFractalOctaves(noisePerturbOctaves);
+                noise->SetPerturbFractalLacunarity(noisePerturbLacunarity);
+                noise->SetPerturbFractalGain(noisePerturbGain);
+                noise->SetPerturbNormaliseLength(noisePerturbNormaliseLength);
+            }
+
             chrono::high_resolution_clock::time_point startTime;
             chrono::high_resolution_clock::time_point endTime;
 
@@ -418,6 +441,20 @@ int main(int argc, char ** argv)
             ImGui::PopItemFlag();
             ImGui::PopStyleVar();
         }
+
+        ImGui::Text("");
+        ImGui::Text("Perturb Settings");
+
+        int perturbIndex=getIndexFromType(perturbTypes, currentPerturbType);
+        if(ImGui::Combo("Perturb Type", &perturbIndex, &perturbTypesPacked[0]))
+            currentPerturbType=getTypeFromIndex<HastyNoise::PerturbType>(perturbTypes, perturbIndex);
+
+        ImGui::SliderFloat("Perturb Amp", &noisePerturbAmp, 0.01f, 2.0f, "%.3f");
+        ImGui::SliderFloat("Perturb Frequency", &noisePerturbFrequency, 0.01f, 1.0f, "%.3f");
+        ImGui::SliderInt("Perturb Octaves", &noisePerturbOctaves, 1, 15);
+        ImGui::SliderFloat("Perturb Lacunarity", &noisePerturbLacunarity, 0.01f, 2.0f, "%.3f");
+        ImGui::SliderFloat("Perturb Gain", &noisePerturbGain, 0.01f, 10.0f, "%.3f");
+        ImGui::SliderFloat("Perturb Normalise Length", &noisePerturbNormaliseLength, 0.01f, 10.0f, "%.3f");
 
         ImGui::End();
 
