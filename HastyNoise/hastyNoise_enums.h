@@ -139,13 +139,14 @@ template<> HASTY_INLINE_VAR std::vector<NameTypeKey<CellularDistance>> EnumKeys<
     {"Natural", HastyNoise::CellularDistance::Natural}
 };
 
-enum class CellularReturnType { None, Value, Distance, Distance2, Distance2Add, Distance2Sub, Distance2Mul, Distance2Div, NoiseLookup, Distance2Cave };
+enum class CellularReturnType { None, Value, Distance, Distance2, ValueDistance2, Distance2Add, Distance2Sub, Distance2Mul, Distance2Div, NoiseLookup, Distance2Cave };
 template<> HASTY_INLINE_VAR std::vector<NameTypeKey<CellularReturnType>> EnumKeys<CellularReturnType>::keys=
 {
     {"None", HastyNoise::CellularReturnType::None},
     {"Value", HastyNoise::CellularReturnType::Value},
     {"Distance", HastyNoise::CellularReturnType::Distance},
     {"Distance2", HastyNoise::CellularReturnType::Distance2},
+    {"ValueDistance2", HastyNoise::CellularReturnType::ValueDistance2},
     {"Distance2Add", HastyNoise::CellularReturnType::Distance2Add},
     {"Distance2Sub", HastyNoise::CellularReturnType::Distance2Sub},
     {"Distance2Mul", HastyNoise::CellularReturnType::Distance2Mul},

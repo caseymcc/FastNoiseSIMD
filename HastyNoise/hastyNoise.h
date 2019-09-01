@@ -264,7 +264,7 @@ struct HASTYNOISE_EXPORT NoiseFuncs
 
 
 // Loads all available simd libraries from directory
-HASTYNOISE_EXPORT bool loadSimd(std::string directory="");
+HASTYNOISE_EXPORT bool loadSimd(const char *path="");
 
 
 namespace details
@@ -478,7 +478,7 @@ public:
 
     //	// Enables position perturbing for all noise types
     //	// Default: None
-    //	void SetPerturbType(PerturbType perturbType) { m_perturbType = perturbType; }
+    void SetPerturbType(PerturbType perturbType) { m_perturbType = perturbType; }
 
         // Sets the maximum distance the input position can be perturbed
         // Default: 1.0

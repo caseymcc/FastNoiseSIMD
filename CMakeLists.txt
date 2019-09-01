@@ -142,6 +142,11 @@ set(hastyNoise_inline
     HastyNoise/simd_init.inl
 )
 
+#project expects debug libs to have d at the end
+if("${CMAKE_DEBUG_POSTFIX}" STREQUAL "")
+    set(CMAKE_DEBUG_POSTFIX "d")
+endif()
+
 add_library(hastyNoise SHARED
     ${hastyNoise_sources}
     ${hastyNoise_headers}

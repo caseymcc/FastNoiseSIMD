@@ -954,67 +954,6 @@ struct ReturnDistance<_SIMDType, CellularReturnType::Distance2Div>
     }
 };
 
-template<SIMDType _SIMDType, CellularDistance _CellularDistance>
-static typename SIMD<_SIMDType>::Float VECTORCALL CellularValueSingle(typename SIMD<_SIMDType>::Int seed, typename SIMD<_SIMDType>::Float x, typename SIMD<_SIMDType>::Float y, typename SIMD<_SIMDType>::Float z, typename SIMD<_SIMDType>::Float cellJitter)
-{
-    typedef Constants<typename SIMD<_SIMDType>::Float, typename SIMD<_SIMDType>::Int, _SIMDType> Constant;
-    typename SIMD<_SIMDType>::Float distance=Constant::numf_999999;
-    typename SIMD<_SIMDType>::Float cellValue=SIMD<_SIMDType>::undefinedFloat();
-
-    typename SIMD<_SIMDType>::Int xc=SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(x), Constant::numi_1);
-    typename SIMD<_SIMDType>::Int ycBase=SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(y), Constant::numi_1);
-    typename SIMD<_SIMDType>::Int zcBase=SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(z), Constant::numi_1);
-
-    typename SIMD<_SIMDType>::Float xcf=SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(xc), x);
-    typename SIMD<_SIMDType>::Float ycfBase=SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(ycBase), y);
-    typename SIMD<_SIMDType>::Float zcfBase=SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(zcBase), z);
-
-    xc=SIMD<_SIMDType>::mul(xc, Constant::numi_xPrime);
-    ycBase=SIMD<_SIMDType>::mul(ycBase, Constant::numi_yPrime);
-    zcBase=SIMD<_SIMDType>::mul(zcBase, Constant::numi_zPrime);
-
-    for(int xi=0; xi < 3; xi++)
-    {
-        typename SIMD<_SIMDType>::Float ycf=ycfBase;
-        typename SIMD<_SIMDType>::Int yc=ycBase;
-        for(int yi=0; yi < 3; yi++)
-        {
-            typename SIMD<_SIMDType>::Float zcf=zcfBase;
-            typename SIMD<_SIMDType>::Int zc=zcBase;
-            for(int zi=0; zi < 3; zi++)
-            {
-                typename SIMD<_SIMDType>::Int hash=HashHB<_SIMDType>(seed, xc, yc, zc);
-                typename SIMD<_SIMDType>::Float xd=SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(SIMD<_SIMDType>::_and(hash, Constant::numi_bit10Mask)), Constant::numf_511_5);
-                typename SIMD<_SIMDType>::Float yd=SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(SIMD<_SIMDType>::_and(SIMD<_SIMDType>::shiftR(hash, 10), Constant::numi_bit10Mask)), Constant::numf_511_5);
-                typename SIMD<_SIMDType>::Float zd=SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(SIMD<_SIMDType>::_and(SIMD<_SIMDType>::shiftR(hash, 20), Constant::numi_bit10Mask)), Constant::numf_511_5);
-
-                typename SIMD<_SIMDType>::Float invMag=SIMD<_SIMDType>::mulf(cellJitter, SIMD<_SIMDType>::invSqrt(SIMD<_SIMDType>::mulAdd(xd, xd, SIMD<_SIMDType>::mulAdd(yd, yd, SIMD<_SIMDType>::mulf(zd, zd)))));
-
-                xd=SIMD<_SIMDType>::mulAdd(xd, invMag, xcf);
-                yd=SIMD<_SIMDType>::mulAdd(yd, invMag, ycf);
-                zd=SIMD<_SIMDType>::mulAdd(zd, invMag, zcf);
-
-                typename SIMD<_SIMDType>::Float newCellValue=SIMD<_SIMDType>::mulf(Constant::numf_hash2Float, SIMD<_SIMDType>::convert(hash));
-                typename SIMD<_SIMDType>::Float newDistance=Distance<_SIMDType, _CellularDistance>(xd, yd, zd);
-
-                typename SIMD<_SIMDType>::Mask closer=SIMD<_SIMDType>::lessThan(newDistance, distance);
-
-                distance=SIMD<_SIMDType>::min(newDistance, distance);
-                cellValue=SIMD<_SIMDType>::blend(cellValue, newCellValue, closer);
-
-                zcf=SIMD<_SIMDType>::add(zcf, Constant::numf_1);
-                zc=SIMD<_SIMDType>::add(zc, Constant::numi_zPrime);
-            }
-            ycf=SIMD<_SIMDType>::add(ycf, Constant::numf_1);
-            yc=SIMD<_SIMDType>::add(yc, Constant::numi_yPrime);
-        }
-        xcf=SIMD<_SIMDType>::add(xcf, Constant::numf_1);
-        xc=SIMD<_SIMDType>::add(xc, Constant::numi_xPrime);
-    }
-
-    return cellValue;
-}
-
 template<SIMDType _SIMDType>
 struct NoiseLookupSettings
 {
@@ -1038,17 +977,56 @@ struct NoiseLookupSettings
 //    return GetValue<_SIMDType, _NoiseType, _FractalType>::_(seedV, xF, yF, zF);
 //}
 
+//CellularReturnType::Value
+//template<SIMDType _SIMDType, CellularReturnType _Type, typename ..._Types>
+//struct ReturnValue
+//{
+//
+//};
+//
+//template<SIMDType _SIMDType, CellularReturnType _Type>
+//struct ReturnValue
+//{
+//    using Type=typename SIMD<_SIMDType>::Float;
+//};
 
-
-template<SIMDType _SIMDType, CellularDistance _CellularDistance, bool _CalcCellValue>
-static typename SIMD<_SIMDType>::Float VECTORCALL CellularDistanceSingle(typename SIMD<_SIMDType>::Int seed, typename SIMD<_SIMDType>::Float x, typename SIMD<_SIMDType>::Float y, typename SIMD<_SIMDType>::Float z, typename SIMD<_SIMDType>::Float cellJitter)
+template<SIMDType _SIMDType, CellularDistance _CellularDistance, CellularReturnType _CellularReturnType>
+static typename SIMD<_SIMDType>::Float VECTORCALL CellularDistanceSingle(typename SIMD<_SIMDType>::Int seed, typename SIMD<_SIMDType>::Float x, typename SIMD<_SIMDType>::Float y, typename SIMD<_SIMDType>::Float z, typename SIMD<_SIMDType>::Float cellJitter, int index0, int index1)
 {
     typedef Constants<typename SIMD<_SIMDType>::Float, typename SIMD<_SIMDType>::Int, _SIMDType> Constant;
-    typename SIMD<_SIMDType>::Float distance=Constant::numf_999999;
+    typename SIMD<_SIMDType>::Float distance;
     typename SIMD<_SIMDType>::Float cellValue;
-        
-    if(_CalcCellValue)
+    typename SIMD<_SIMDType>::Float valueArray[HN_CELLULAR_INDEX_MAX+1];
+    typename SIMD<_SIMDType>::Float distanceArray[HN_CELLULAR_INDEX_MAX+1];
+
+//    ReturnValue<_SIMDType, args...> value;
+
+    if(_CellularReturnType==CellularReturnType::Value)
+    {
         cellValue=Constant::numf_0;
+        distance=Constant::numf_999999;
+    }
+    if(_CellularReturnType==CellularReturnType::Distance)
+        distance=Constant::numf_999999;
+    else if(_CellularReturnType==CellularReturnType::ValueDistance2)
+    {
+        valueArray[0]=Constant::numf_0;
+        valueArray[1]=Constant::numf_0;
+        valueArray[2]=Constant::numf_0;
+        valueArray[3]=Constant::numf_0;
+
+        distanceArray[0]=Constant::numf_999999;
+        distanceArray[1]=Constant::numf_999999;
+        distanceArray[2]=Constant::numf_999999;
+        distanceArray[3]=Constant::numf_999999;
+    }
+    else
+    {
+        distanceArray[0]=Constant::numf_999999;
+        distanceArray[1]=Constant::numf_999999;
+        distanceArray[2]=Constant::numf_999999;
+        distanceArray[3]=Constant::numf_999999;
+    }
 
     typename SIMD<_SIMDType>::Int xc=SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(x), Constant::numi_1);
     typename SIMD<_SIMDType>::Int ycBase=SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(y), Constant::numi_1);
@@ -1084,15 +1062,46 @@ static typename SIMD<_SIMDType>::Float VECTORCALL CellularDistanceSingle(typenam
                 zd=SIMD<_SIMDType>::mulAdd(zd, invMag, zcf);
 
                 typename SIMD<_SIMDType>::Float newDistance=Distance<_SIMDType, _CellularDistance>::_(xd, yd, zd);
-                if(_CalcCellValue)
+
+                if(_CellularReturnType == CellularReturnType::Value)
                 {
                     typename SIMD<_SIMDType>::Float newCellValue=SIMD<_SIMDType>::mulf(Constant::numf_hash2Float, SIMD<_SIMDType>::convert(hash));
                     typename SIMD<_SIMDType>::Mask closer=SIMD<_SIMDType>::lessThan(newDistance, distance);
                     cellValue=SIMD<_SIMDType>::blend(cellValue, newCellValue, closer);
+
+                    distance=SIMD<_SIMDType>::min(distance, newDistance);
+                }
+                else if(_CellularReturnType == CellularReturnType::Distance)
+                {
+                    distance=SIMD<_SIMDType>::min(distance, newDistance);
+                }
+                else if(_CellularReturnType==CellularReturnType::ValueDistance2)
+                {
+                    typename SIMD<_SIMDType>::Float newCellValue=SIMD<_SIMDType>::mulf(Constant::numf_hash2Float, SIMD<_SIMDType>::convert(hash));
+                    typename SIMD<_SIMDType>::Mask mask;
+
+                    for(int i=index1; i>0; i--)
+                    {
+                        mask=SIMD<_SIMDType>::lessThan(newDistance, distanceArray[i]);
+                        
+                        typename SIMD<_SIMDType>::Float currentValue=SIMD<_SIMDType>::blend(valueArray[i], newCellValue, mask);
+                        typename SIMD<_SIMDType>::Float minDistance=SIMD<_SIMDType>::min(distanceArray[i], newDistance);
+
+                        mask=SIMD<_SIMDType>::greaterThan(minDistance, distanceArray[i-1]);
+                        valueArray[i]=SIMD<_SIMDType>::blend(valueArray[i-1], currentValue, mask);
+                        distanceArray[i]=SIMD<_SIMDType>::max(minDistance, distanceArray[i-1]);
+                    }
+                    mask=SIMD<_SIMDType>::lessThan(newDistance, distanceArray[0]);
+                    valueArray[0]=SIMD<_SIMDType>::blend(valueArray[0], newCellValue, mask);
+                    distanceArray[0]=SIMD<_SIMDType>::min(distanceArray[0], newDistance);
+                }
+                else
+                {
+                    for(int i=index1; i>0; i--)
+                        distanceArray[i]=SIMD<_SIMDType>::max(SIMD<_SIMDType>::min(distanceArray[i], newDistance), distanceArray[i-1]);
+                    distanceArray[0]=SIMD<_SIMDType>::min(distanceArray[0], newDistance);
                 }
 
-                distance=SIMD<_SIMDType>::min(distance, newDistance);
-
                 zcf=SIMD<_SIMDType>::add(zcf, Constant::numf_1);
                 zc=SIMD<_SIMDType>::add(zc, Constant::numi_zPrime);
             }
@@ -1103,67 +1112,15 @@ static typename SIMD<_SIMDType>::Float VECTORCALL CellularDistanceSingle(typenam
         xc=SIMD<_SIMDType>::add(xc, Constant::numi_xPrime);
     }
 
-    if(_CalcCellValue)
+    if(_CellularReturnType == CellularReturnType::Value)
         return cellValue;
-    return distance;
-}
-
-template<SIMDType _SIMDType, CellularDistance _CellularDistance, CellularReturnType _CellularReturnType>
-static typename SIMD<_SIMDType>::Float VECTORCALL CellularReturnDistanceSingle(typename SIMD<_SIMDType>::Int seed, typename SIMD<_SIMDType>::Float x, typename SIMD<_SIMDType>::Float y, typename SIMD<_SIMDType>::Float z, typename SIMD<_SIMDType>::Float cellJitter, int index0, int index1)
-{
-    typedef Constants<typename SIMD<_SIMDType>::Float, typename SIMD<_SIMDType>::Int, _SIMDType> Constant;
-    typename SIMD<_SIMDType>::Float distance[HN_CELLULAR_INDEX_MAX+1]={Constant::numf_999999,Constant::numf_999999,Constant::numf_999999,Constant::numf_999999};
-
-    typename SIMD<_SIMDType>::Int xc=SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(x), Constant::numi_1);
-    typename SIMD<_SIMDType>::Int ycBase=SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(y), Constant::numi_1);
-    typename SIMD<_SIMDType>::Int zcBase=SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(z), Constant::numi_1);
-
-    typename SIMD<_SIMDType>::Float xcf=SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(xc), x);
-    typename SIMD<_SIMDType>::Float ycfBase=SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(ycBase), y);
-    typename SIMD<_SIMDType>::Float zcfBase=SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(zcBase), z);
-
-    xc=SIMD<_SIMDType>::mul(xc, Constant::numi_xPrime);
-    ycBase=SIMD<_SIMDType>::mul(ycBase, Constant::numi_yPrime);
-    zcBase=SIMD<_SIMDType>::mul(zcBase, Constant::numi_zPrime);
-
-    for(int xi=0; xi < 3; xi++)
-    {
-        typename SIMD<_SIMDType>::Float ycf=ycfBase;
-        typename SIMD<_SIMDType>::Int yc=ycBase;
-        for(int yi=0; yi < 3; yi++)
-        {
-            typename SIMD<_SIMDType>::Float zcf=zcfBase;
-            typename SIMD<_SIMDType>::Int zc=zcBase;
-            for(int zi=0; zi < 3; zi++)
-            {
-                typename SIMD<_SIMDType>::Int hash=HashHB<_SIMDType>(seed, xc, yc, zc);
-                typename SIMD<_SIMDType>::Float xd=SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(SIMD<_SIMDType>::_and(hash, Constant::numi_bit10Mask)), Constant::numf_511_5);
-                typename SIMD<_SIMDType>::Float yd=SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(SIMD<_SIMDType>::_and(SIMD<_SIMDType>::shiftR(hash, 10), Constant::numi_bit10Mask)), Constant::numf_511_5);
-                typename SIMD<_SIMDType>::Float zd=SIMD<_SIMDType>::sub(SIMD<_SIMDType>::convert(SIMD<_SIMDType>::_and(SIMD<_SIMDType>::shiftR(hash, 20), Constant::numi_bit10Mask)), Constant::numf_511_5);
-
-                typename SIMD<_SIMDType>::Float invMag=SIMD<_SIMDType>::mulf(cellJitter, SIMD<_SIMDType>::invSqrt(SIMD<_SIMDType>::mulAdd(xd, xd, SIMD<_SIMDType>::mulAdd(yd, yd, SIMD<_SIMDType>::mulf(zd, zd)))));
-
-                xd=SIMD<_SIMDType>::mulAdd(xd, invMag, xcf);
-                yd=SIMD<_SIMDType>::mulAdd(yd, invMag, ycf);
-                zd=SIMD<_SIMDType>::mulAdd(zd, invMag, zcf);
-
-                typename SIMD<_SIMDType>::Float newDistance=Distance<_SIMDType, _CellularDistance>::_(xd, yd, zd);
-
-                for(int i=index1; i > 0; i--)
-                    distance[i]=SIMD<_SIMDType>::max(SIMD<_SIMDType>::min(distance[i], newDistance), distance[i-1]);
-                distance[0]=SIMD<_SIMDType>::min(distance[0], newDistance);
-
-                zcf=SIMD<_SIMDType>::add(zcf, Constant::numf_1);
-                zc=SIMD<_SIMDType>::add(zc, Constant::numi_zPrime);
-            }
-            ycf=SIMD<_SIMDType>::add(ycf, Constant::numf_1);
-            yc=SIMD<_SIMDType>::add(yc, Constant::numi_yPrime);
-        }
-        xcf=SIMD<_SIMDType>::add(xcf, Constant::numf_1);
-        xc=SIMD<_SIMDType>::add(xc, Constant::numi_xPrime);
-    }
-
-    return ReturnDistance<_SIMDType, _CellularReturnType>::_(distance[index0], distance[index1]);
+    else if(_CellularReturnType == CellularReturnType::Distance)
+        return distance;
+    else if(_CellularReturnType == CellularReturnType::ValueDistance2)
+        return valueArray[index1];
+    else
+        return ReturnDistance<_SIMDType, _CellularReturnType>::_(distanceArray[index0], distanceArray[index1]);
+    return Constant::numf_0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1174,7 +1131,7 @@ struct GetValue
 {
     template<typename ..._Types>
     static typename SIMD<_SIMDType>::Float _(const NoiseValues<_SIMDType> &noise, typename SIMD<_SIMDType>::Float &xF, typename SIMD<_SIMDType>::Float &yF, typename SIMD<_SIMDType>::Float &zF, _Types ...args)
-    { return CellularReturnDistanceSingle<_SIMDType, _CellularDistance, _CellularReturnType>(noise.seedV, xF, yF, zF, noise.cellJitterV, noise.index0, noise.index1); }
+    { return CellularDistanceSingle<_SIMDType, _CellularDistance, _CellularReturnType>(noise.seedV, xF, yF, zF, noise.cellJitterV, noise.index0, noise.index1); }
 };
 
 template<SIMDType _SIMDType, NoiseType _NoiseType>
@@ -1208,23 +1165,6 @@ struct GetValue<_SIMDType, _NoiseType, FractalType::RigidMulti, CellularDistance
     static typename SIMD<_SIMDType>::Float _(const NoiseValues<_SIMDType> &noise, typename SIMD<_SIMDType>::Float &xF, typename SIMD<_SIMDType>::Float &yF, typename SIMD<_SIMDType>::Float &zF)
     { return RigidMultiSingle<_SIMDType, _NoiseType>(noise, xF, yF, zF); }
 };
-
-template<SIMDType _SIMDType, NoiseType _NoiseType, FractalType _FractalType, CellularDistance _CellularDistance>
-struct GetValue<_SIMDType, _NoiseType, _FractalType, _CellularDistance, CellularReturnType::Value, NoiseType::None>
-{
-    template<typename ..._Types>
-    static typename SIMD<_SIMDType>::Float _(const NoiseValues<_SIMDType> &noise, typename SIMD<_SIMDType>::Float &xF, typename SIMD<_SIMDType>::Float &yF, typename SIMD<_SIMDType>::Float &zF)
-    { return CellularDistanceSingle<_SIMDType, _CellularDistance, true>(noise.seedV, xF, yF, zF, noise.cellJitterV); }
-};
-
-template<SIMDType _SIMDType, NoiseType _NoiseType, FractalType _FractalType, CellularDistance _CellularDistance>
-struct GetValue<_SIMDType, _NoiseType, _FractalType, _CellularDistance, CellularReturnType::Distance, NoiseType::None>
-{
-    template<typename ..._Types>
-    static typename SIMD<_SIMDType>::Float _(const NoiseValues<_SIMDType> &noise, typename SIMD<_SIMDType>::Float &xF, typename SIMD<_SIMDType>::Float &yF, typename SIMD<_SIMDType>::Float &zF)
-    { return CellularDistanceSingle<_SIMDType, _CellularDistance, false>(noise.seedV, xF, yF, zF, noise.cellJitterV); }
-};
-
 
 template<SIMDType _SIMDType, NoiseType _NoiseType, FractalType _FractalType, CellularDistance _CellularDistance>
 static typename SIMD<_SIMDType>::Float VECTORCALL CellularLookupSingle(const NoiseValues<_SIMDType> &noise, typename SIMD<_SIMDType>::Float x, typename SIMD<_SIMDType>::Float y, typename SIMD<_SIMDType>::Float z, typename SIMD<_SIMDType>::Float cellJitter)
@@ -1542,22 +1482,22 @@ static void CallBuildFractal(NoiseType noiseType, PerturbType perturbType, Fract
     }
 }
 
-template<SIMDType _SIMDType, BuildType _BuildType, CellularReturnType _CellularReturnType, typename... _Types>
+template<SIMDType _SIMDType, BuildType _BuildType, PerturbType _PerturbType, CellularReturnType _CellularReturnType, typename... _Types>
 static void CallBuildCellular(CellularDistance cellularDistance, _Types... args)
 {
     switch(cellularDistance)
     {
     case CellularDistance::None:
-        Build<_SIMDType, NoiseType::Cellular, PerturbType::None, FractalType::None, CellularDistance::None, _CellularReturnType, NoiseType::None, _BuildType>::_(args...);
+        Build<_SIMDType, NoiseType::Cellular, _PerturbType, FractalType::None, CellularDistance::None, _CellularReturnType, NoiseType::None, _BuildType>::_(args...);
         break;
     case CellularDistance::Euclidean:
-        Build<_SIMDType, NoiseType::Cellular, PerturbType::None, FractalType::None, CellularDistance::Euclidean, _CellularReturnType, NoiseType::None, _BuildType>::_(args...);
+        Build<_SIMDType, NoiseType::Cellular, _PerturbType, FractalType::None, CellularDistance::Euclidean, _CellularReturnType, NoiseType::None, _BuildType>::_(args...);
         break;
     case CellularDistance::Manhattan:
-        Build<_SIMDType, NoiseType::Cellular, PerturbType::None, FractalType::None, CellularDistance::Manhattan, _CellularReturnType, NoiseType::None, _BuildType>::_(args...);
+        Build<_SIMDType, NoiseType::Cellular, _PerturbType, FractalType::None, CellularDistance::Manhattan, _CellularReturnType, NoiseType::None, _BuildType>::_(args...);
         break;
     case CellularDistance::Natural:
-        Build<_SIMDType, NoiseType::Cellular, PerturbType::None, FractalType::None, CellularDistance::Natural, _CellularReturnType, NoiseType::None, _BuildType>::_(args...);
+        Build<_SIMDType, NoiseType::Cellular, _PerturbType, FractalType::None, CellularDistance::Natural, _CellularReturnType, NoiseType::None, _BuildType>::_(args...);
         break;
     }
 }
@@ -1623,40 +1563,69 @@ static void CallBuildCellularLookup(NoiseType noiseType, PerturbType perturbType
     }
 }
 
-template<SIMDType _SIMDType, BuildType _BuildType, typename... _Types>
-static void CallBuildCellular(NoiseType noiseType, PerturbType perturbType, FractalType fractalType, CellularDistance cellularDistance, CellularReturnType cellularReturnType, NoiseType lookupNoiseType, _Types... args)
+template<SIMDType _SIMDType, BuildType _BuildType, PerturbType _PerturbType, typename... _Types>
+static void CallBuildCellular(CellularDistance cellularDistance, CellularReturnType cellularReturnType, NoiseType lookupNoiseType, _Types... args)
 {
     switch(cellularReturnType)
     {
     case CellularReturnType::None:
-        CallBuildCellular<_SIMDType, _BuildType, CellularReturnType::None>(cellularDistance, args...);
+        CallBuildCellular<_SIMDType, _BuildType, _PerturbType, CellularReturnType::None>(cellularDistance, args...);
         break;
     case CellularReturnType::Value:
-        CallBuildCellular<_SIMDType, _BuildType, CellularReturnType::Value>(cellularDistance, args...);
+        CallBuildCellular<_SIMDType, _BuildType, _PerturbType, CellularReturnType::Value>(cellularDistance, args...);
         break;
     case CellularReturnType::Distance:
-        CallBuildCellular<_SIMDType, _BuildType, CellularReturnType::Distance>(cellularDistance, args...);
+        CallBuildCellular<_SIMDType, _BuildType, _PerturbType, CellularReturnType::Distance>(cellularDistance, args...);
+        break;
+    case CellularReturnType::ValueDistance2:
+        CallBuildCellular<_SIMDType, _BuildType, _PerturbType, CellularReturnType::ValueDistance2>(cellularDistance, args...);
         break;
     case CellularReturnType::Distance2:
-        CallBuildCellular<_SIMDType, _BuildType, CellularReturnType::Distance2>(cellularDistance, args...);
+        CallBuildCellular<_SIMDType, _BuildType, _PerturbType, CellularReturnType::Distance2>(cellularDistance, args...);
         break;
     case CellularReturnType::Distance2Add:
-        CallBuildCellular<_SIMDType, _BuildType, CellularReturnType::Distance2Add>(cellularDistance, args...);
+        CallBuildCellular<_SIMDType, _BuildType, _PerturbType, CellularReturnType::Distance2Add>(cellularDistance, args...);
         break;
     case CellularReturnType::Distance2Sub:
-        CallBuildCellular<_SIMDType, _BuildType, CellularReturnType::Distance2Sub>(cellularDistance, args...);
+        CallBuildCellular<_SIMDType, _BuildType, _PerturbType, CellularReturnType::Distance2Sub>(cellularDistance, args...);
         break;
     case CellularReturnType::Distance2Mul:
-        CallBuildCellular<_SIMDType, _BuildType, CellularReturnType::Distance2Mul>(cellularDistance, args...);
+        CallBuildCellular<_SIMDType, _BuildType, _PerturbType, CellularReturnType::Distance2Mul>(cellularDistance, args...);
         break;
     case CellularReturnType::Distance2Div:
-        CallBuildCellular<_SIMDType, _BuildType, CellularReturnType::Distance2Div>(cellularDistance, args...);
+        CallBuildCellular<_SIMDType, _BuildType, _PerturbType, CellularReturnType::Distance2Div>(cellularDistance, args...);
         break;
     case CellularReturnType::NoiseLookup:
         //        CallBuildCellularLookup<_SIMDType, _BuildType, CellularReturnType::NoiseLookup>(noiseType, perturbType, fractalType, cellularDistance, lookupNoiseType, args...);
         break;
     case CellularReturnType::Distance2Cave:
-        CallBuildCellular<_SIMDType, _BuildType, CellularReturnType::Distance2Cave>(cellularDistance, args...);
+        CallBuildCellular<_SIMDType, _BuildType, _PerturbType, CellularReturnType::Distance2Cave>(cellularDistance, args...);
+        break;
+    }
+}
+
+template<SIMDType _SIMDType, BuildType _BuildType, typename... _Types>
+static void CallBuildCellular(PerturbType perturbType, CellularDistance cellularDistance, CellularReturnType cellularReturnType, NoiseType lookupNoiseType, _Types... args)
+{
+    switch(perturbType)
+    {
+    case PerturbType::None:
+        CallBuildCellular<_SIMDType, _BuildType, PerturbType::None>(cellularDistance, cellularReturnType, lookupNoiseType, args...);
+        break;
+    case PerturbType::Gradient:
+        CallBuildCellular<_SIMDType, _BuildType, PerturbType::Gradient>(cellularDistance, cellularReturnType, lookupNoiseType, args...);
+        break;
+    case PerturbType::GradientFractal:
+        CallBuildCellular<_SIMDType, _BuildType, PerturbType::GradientFractal>(cellularDistance, cellularReturnType, lookupNoiseType, args...);
+        break;
+    case PerturbType::Normalise:
+        CallBuildCellular<_SIMDType, _BuildType, PerturbType::Normalise>(cellularDistance, cellularReturnType, lookupNoiseType, args...);
+        break;
+    case PerturbType::Gradient_Normalise:
+        CallBuildCellular<_SIMDType, _BuildType, PerturbType::Gradient_Normalise>(cellularDistance, cellularReturnType, lookupNoiseType, args...);
+        break;
+    case PerturbType::GradientFractal_Normalise:
+        CallBuildCellular<_SIMDType, _BuildType, PerturbType::GradientFractal_Normalise>(cellularDistance, cellularReturnType, lookupNoiseType, args...);
         break;
     }
 }
@@ -1669,7 +1638,7 @@ static void CallBuild(NoiseType noiseType, PerturbType perturbType, FractalType 
         if(cellularReturnType==CellularReturnType::NoiseLookup)
             CallBuildCellularLookup<_SIMDType, _BuildType, CellularReturnType::NoiseLookup>(noiseType, perturbType, fractalType, cellularDistance, lookupNoiseType, args...);
         else
-            CallBuildCellular<_SIMDType, _BuildType>(noiseType, perturbType, fractalType, cellularDistance, cellularReturnType, lookupNoiseType, args...);
+            CallBuildCellular<_SIMDType, _BuildType>(perturbType, cellularDistance, cellularReturnType, lookupNoiseType, args...);
     }
     else if((noiseType==NoiseType::ValueFractal)||(noiseType==NoiseType::PerlinFractal)||(noiseType==NoiseType::SimplexFractal)||(noiseType==NoiseType::CubicFractal))
         CallBuildFractal<_SIMDType, _BuildType, CellularDistance::None, CellularReturnType::None, NoiseType::None>(noiseType, perturbType, fractalType, args...);

@@ -95,4 +95,4 @@ struct SIMD<SIMDType::AVX2>
 };
 
 }//namespace details
-}//namespace FastNoise
+}//namespace HastyNoise

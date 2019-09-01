@@ -122,4 +122,4 @@ struct SIMD<SIMDType::SSE2>
 #endif
 
 }//namespace details
-}//namespace FastNoise
+}//namespace HastyNoise

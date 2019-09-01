@@ -87,5 +87,5 @@ template class HASTYNOISE_EXPORT NoiseSIMD<SIMDType::AVX512>;
 //template struct Constants<typename SIMD<SIMDType::AVX512>::Float, typename SIMD<SIMDType::AVX512>::Int, SIMDType::AVX512>;
 
 }//namespace details
-}//namespace FastNoiseSIMD
+}//namespace HastyNoise
 

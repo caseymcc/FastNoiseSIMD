@@ -120,4 +120,4 @@ struct SIMD<SIMDType::AVX512>
 };
 
 }//namespace details
-}//namespace FastNoise
+}//namespace HastyNoise
