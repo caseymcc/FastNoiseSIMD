@@ -19,9 +19,15 @@ message(STATUS "HN_PREVIEW_APP: ${HN_PREVIEW_APP}")
 
 include(${CMAKE_CURRENT_LIST_DIR}/cmake/Hunter/HunterGate.cmake)
 
+#HunterGate(
+#    URL "https://github.com/ruslo/hunter/archive/v0.23.181.tar.gz"
+#    SHA1 "270cafa2d67def4ad4d52409ff22a28890d41c84"
+#    LOCAL
+#)
+
 HunterGate(
-    URL "https://github.com/ruslo/hunter/archive/v0.23.181.tar.gz"
-    SHA1 "270cafa2d67def4ad4d52409ff22a28890d41c84"
+    URL "https://github.com/cpp-pm/hunter/archive/v0.23.244.tar.gz"
+    SHA1 "2c0f491fd0b80f7b09e3d21adb97237161ef9835"
     LOCAL
 )
 
@@ -171,10 +177,14 @@ elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_CXX_COMPILER_ID}"
         target_compile_options(hastyNoise PUBLIC "-lstdc++fs")
         target_link_libraries(hastyNoise stdc++fs)
     endif()
-    if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" AND is_travis)
-        target_compile_options(hastyNoise PUBLIC "-Wno-ignored-attributes") #gcc warnings are mean to travis logs
+    if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+        target_compile_options(hastyNoise PUBLIC "-Wa,-mbig-obj")
+        if(is_travis)
+            target_compile_options(hastyNoise PUBLIC "-Wno-ignored-attributes") #gcc warnings are mean to travis logs
+        endif()
     endif()
 endif()
+#message(FATAL_ERROR "CMAKE_CXX_COMPILER_ID: ${CMAKE_CXX_COMPILER_ID}")
 #target_include_directories(hastyNoise PUBLIC ${CMAKE_CURRENT_LIST_DIR})
 
 if(HN_USE_FILESYSTEM EQUAL ${HN_NO_FILESYSTEM})

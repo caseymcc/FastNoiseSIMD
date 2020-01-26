@@ -242,7 +242,7 @@ struct HASTYNOISE_EXPORT PerturbDetails
     float NormaliseLength;
 };
 
-#if defined(_WIN32)
+#if defined(_WIN32) && defined(_MSC_VER)
 #define VECTORCALL __vectorcall
 #else
 #define VECTORCALL

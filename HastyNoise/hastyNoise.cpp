@@ -72,6 +72,9 @@ namespace fs=std::experimental::filesystem;
 #endif
 #endif
 
+#ifndef _XCR_XFEATURE_ENABLED_MASK
+#define _XCR_XFEATURE_ENABLED_MASK 0
+#endif
 
 #include "simd_constants.inl"
 #include "internal_none.inl"
