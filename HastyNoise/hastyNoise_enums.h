@@ -71,7 +71,7 @@ template<> HASTY_INLINE_VAR std::vector<NameTypeKey<SIMDType>> EnumKeys<SIMDType
     {"AVX512", HastyNoise::SIMDType::AVX512}
 };
 
-enum class NoiseType { None, Value, ValueFractal, Perlin, PerlinFractal, Simplex, SimplexFractal, WhiteNoise, Cellular, Cubic, CubicFractal };
+enum class NoiseType { None, Value, ValueFractal, Perlin, PerlinFractal, Simplex, SimplexFractal, OpenSimplex2, OpenSimplex2Fractal, WhiteNoise, Cellular, Cubic, CubicFractal };
 template<> HASTY_INLINE_VAR std::vector<NameTypeKey<NoiseType>> EnumKeys<NoiseType>::keys=
 {
     {"None", HastyNoise::NoiseType::None},
@@ -81,6 +81,8 @@ template<> HASTY_INLINE_VAR std::vector<NameTypeKey<NoiseType>> EnumKeys<NoiseTy
     {"PerlinFractal", HastyNoise::NoiseType::PerlinFractal},
     {"Simplex", HastyNoise::NoiseType::Simplex},
     {"SimplexFractal", HastyNoise::NoiseType::SimplexFractal},
+	{"OpenSimplex2", HastyNoise::NoiseType::OpenSimplex2},
+	{"OpenSimplex2Fractal", HastyNoise::NoiseType::OpenSimplex2Fractal},
     {"WhiteNoise", HastyNoise::NoiseType::WhiteNoise},
     {"Cellular", HastyNoise::NoiseType::Cellular},
     {"Cubic", HastyNoise::NoiseType::Cubic},
@@ -95,6 +97,7 @@ inline bool isFractal(NoiseType type)
     case HastyNoise::NoiseType::Value:
     case HastyNoise::NoiseType::Perlin:
     case HastyNoise::NoiseType::Simplex:
+	case HastyNoise::NoiseType::OpenSimplex2:
     case HastyNoise::NoiseType::WhiteNoise:
     case HastyNoise::NoiseType::Cellular:
     case HastyNoise::NoiseType::Cubic:
@@ -103,6 +106,7 @@ inline bool isFractal(NoiseType type)
     case HastyNoise::NoiseType::ValueFractal:
     case HastyNoise::NoiseType::PerlinFractal:
     case HastyNoise::NoiseType::SimplexFractal:
+	case HastyNoise::NoiseType::OpenSimplex2Fractal:
     case HastyNoise::NoiseType::CubicFractal:
         return true;
         break;

@@ -42,6 +42,8 @@ std::vector<NoiseInfo> Noises=
     {"PerlinFractal", HastyNoise::NoiseType::PerlinFractal},
     {"Simplex", HastyNoise::NoiseType::Simplex},
     {"SimplexFractal", HastyNoise::NoiseType::SimplexFractal},
+	{"OpenSimplex2", HastyNoise::NoiseType::OpenSimplex2},
+	{"OpenSimplex2Fractal", HastyNoise::NoiseType::OpenSimplex2Fractal},
     {"WhiteNoise", HastyNoise::NoiseType::WhiteNoise},
     {"Cellular", HastyNoise::NoiseType::Cellular},
     {"Cubic", HastyNoise::NoiseType::Cubic},
@@ -242,7 +244,7 @@ void testPerformance()
     size_t maxLevel=HastyNoise::GetFastestSIMD();
     std::vector<HastyNoise::FloatBuffer> noiseSets(HastyNoise::SIMDTypeCount);
 
-    for(auto &info:Noises)
+	for(auto &info:Noises)
     {
         std::cout<<info.name<<" --------------------------------------------------------\n";
 

@@ -31,6 +31,7 @@ struct InitSIMDValuesBase
 
         _Constants::numf_0=SIMD<_SIMDType>::zeroFloat();
         _Constants::numf_1=SIMD<_SIMDType>::set(1.0f);
+		_Constants::numf_neg1=SIMD<_SIMDType>::set(-1.0f);
         _Constants::numf_2=SIMD<_SIMDType>::set(2.0f);
         _Constants::numf_6=SIMD<_SIMDType>::set(6.0f);
         _Constants::numf_10=SIMD<_SIMDType>::set(10.0f);
@@ -42,9 +43,11 @@ struct InitSIMDValuesBase
         _Constants::numf_0_6=SIMD<_SIMDType>::set(0.6f);
         _Constants::numf_15_5=SIMD<_SIMDType>::set(15.5f);
         _Constants::numf_511_5=SIMD<_SIMDType>::set(511.5f);
+		_Constants::numf_32768_5=SIMD<_SIMDType>::set(32768.5f);
 
         _Constants::numf_F3=SIMD<_SIMDType>::set(1.f/3.f);
         _Constants::numf_G3=SIMD<_SIMDType>::set(1.f/6.f);
+		_Constants::numf_R3=SIMD<_SIMDType>::set(2.f/3.f);
         _Constants::numf_G33=SIMD<_SIMDType>::set((3.f/6.f)-1.f);
         _Constants::numf_hash2Float=SIMD<_SIMDType>::set(1.f/2147483648.f);
         _Constants::numf_vectorSize=SIMD<_SIMDType>::set((float)SIMD<_SIMDType>::vectorSize());

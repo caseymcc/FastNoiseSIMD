@@ -26,6 +26,7 @@ The library compiles a shared library for each of the SIMD instructions sets. Du
 | Value             | yes     | yes     |
 | Perlin            | yes     | yes     |
 | Simplex           | yes     | yes     |
+| OpenSimplex2      | yes     | yes     |
 | Cubic             | yes     | yes     |
 | Cellular (Worley) | no      | yes     |
 
@@ -70,14 +71,15 @@ Timings below timings are to generate 100x 64x64x64 (~26.2M) points of noise on 
 - CPU: Intel Core i7-5820K @ 3.3Ghz
 - Compiler: Visual Studio 2017 x64
 
-|  Noise Type | AVX512 |  AVX2  | SSE4.1 |  SSE2  |    None   |
-|-------------|--------|--------|--------|--------|-----------|
-| White Noise |        |    9ms |   18ms |   21ms |      48ms |
-| Value       |        |  114ms |  243ms |  282ms |    2071ms |
-| Perlin      |        |  193ms |  416ms |  534ms |    2816ms |
-| Simplex     |        |  198ms |  372ms |  474ms |    2769ms |
-| Cellular    |        |  915ms | 2095ms | 2218ms |   16388ms |
-| Cubic       |        |  668ms | 1370ms | 2336ms |    5698ms |
+|  Noise Type  | AVX512 |  AVX2  | SSE4.1 |  SSE2  |    None   |
+|--------------|--------|--------|--------|--------|-----------|
+| White Noise  |        |    9ms |   18ms |   21ms |      48ms |
+| Value        |        |  114ms |  243ms |  282ms |    2071ms |
+| Perlin       |        |  193ms |  416ms |  534ms |    2816ms |
+| Simplex      |        |  198ms |  372ms |  474ms |    2769ms |
+| OpenSimplex2 |        |  218ms |  451ms |  471ms |    6683ms |
+| Cellular     |        |  915ms | 2095ms | 2218ms |   16388ms |
+| Cubic        |        |  668ms | 1370ms | 2336ms |    5698ms |
 
 # Examples
 ![preview](https://github.com/caseymcc/HastyNoise/raw/master/examples/preview_simplexfractal.png)

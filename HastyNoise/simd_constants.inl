@@ -10,6 +10,7 @@ struct ConstantsBase
 
     static Int numi_0xffffffff;
     static Float numf_1;
+	static Float numf_neg1;
 
     static Float numf_incremental;
     static Float numf_0;
@@ -24,9 +25,11 @@ struct ConstantsBase
     static Float numf_0_6;
     static Float numf_15_5;
     static Float numf_511_5;
+	static Float numf_32768_5;
 
     static Float numf_F3;
     static Float numf_G3;
+	static Float numf_R3;
     static Float numf_G33;
     static Float numf_hash2Float;
     static Float numf_vectorSize;
@@ -54,6 +57,8 @@ template<typename Float, typename Int>
 Int ConstantsBase<Float, Int>::numi_0xffffffff;
 template<typename Float, typename Int>
 Float ConstantsBase<Float, Int>::numf_1;
+template<typename Float, typename Int>
+Float ConstantsBase<Float, Int>::numf_neg1;
 
 template<typename Float, typename Int>
 Float ConstantsBase<Float, Int>::numf_incremental;
@@ -80,11 +85,15 @@ template<typename Float, typename Int>
 Float ConstantsBase<Float, Int>::numf_15_5;
 template<typename Float, typename Int>
 Float ConstantsBase<Float, Int>::numf_511_5;
+template<typename Float, typename Int>
+Float ConstantsBase<Float, Int>::numf_32768_5;
 
 template<typename Float, typename Int>
 Float ConstantsBase<Float, Int>::numf_F3;
 template<typename Float, typename Int>
 Float ConstantsBase<Float, Int>::numf_G3;
+template<typename Float, typename Int>
+Float ConstantsBase<Float, Int>::numf_R3;
 template<typename Float, typename Int>
 Float ConstantsBase<Float, Int>::numf_G33;
 template<typename Float, typename Int>
