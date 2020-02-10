@@ -388,9 +388,9 @@ struct Single<_SIMDType, NoiseType::OpenSimplex2>
 			Mask dir0xr=simd::lessEqual(simd::max(score0yr, score0zr), score0xr);
 			Mask dir0yr=simd::maskAndNot(dir0xr, simd::lessEqual(simd::max(score0zr, score0xr), score0yr));
 			Mask dir0zr=simd::maskNot(simd::maskOr(dir0xr, dir0yr));
-			Float v1xr=simd::add(v0xr, simd::blend(Constant::numf_0, simd::blend(Constant::numf_1, Constant::numf_neg1, simd::lessThan(d0xr, Constant::numf_0)), dir0xr));
-			Float v1yr=simd::add(v0yr, simd::blend(Constant::numf_0, simd::blend(Constant::numf_1, Constant::numf_neg1, simd::lessThan(d0yr, Constant::numf_0)), dir0yr));
-			Float v1zr=simd::add(v0zr, simd::blend(Constant::numf_0, simd::blend(Constant::numf_1, Constant::numf_neg1, simd::lessThan(d0zr, Constant::numf_0)), dir0zr));
+			Float v1xr=simd::maskAdd(dir0xr, v0xr, simd::_or(Constant::numf_1, simd::_and(d0xr, Constant::numf_neg1)));
+			Float v1yr=simd::maskAdd(dir0yr, v0yr, simd::_or(Constant::numf_1, simd::_and(d0yr, Constant::numf_neg1)));
+			Float v1zr=simd::maskAdd(dir0zr, v0zr, simd::_or(Constant::numf_1, simd::_and(d0zr, Constant::numf_neg1)));
 			Float d1xr=simd::sub(xr, v1xr);
 			Float d1yr=simd::sub(yr, v1yr);
 			Float d1zr=simd::sub(zr, v1zr);
@@ -404,15 +404,15 @@ struct Single<_SIMDType, NoiseType::OpenSimplex2>
 
 			Float t0=simd::nmulAdd(d0zr, d0zr, simd::nmulAdd(d0yr, d0yr, simd::nmulAdd(d0xr, d0xr, Constant::numf_0_6)));
 			Float t1=simd::nmulAdd(d1zr, d1zr, simd::nmulAdd(d1yr, d1yr, simd::nmulAdd(d1xr, d1xr, Constant::numf_0_6)));
-			Mask n0=simd::greaterThan(t0, Constant::numf_0);
-			Mask n1=simd::greaterThan(t1, Constant::numf_0);
+			t0=simd::max(t0, Constant::numf_0);
+			t1=simd::max(t1, Constant::numf_0);
 			t0=simd::mulf(t0, t0);
 			t1=simd::mulf(t1, t1);
 
 			Float v0=simd::mulf(simd::mulf(t0, t0), GradCoord<_SIMDType>::_(seed, hv0xr, hv0yr, hv0zr, d0xr, d0yr, d0zr));
 			Float v1=simd::mulf(simd::mulf(t1, t1), GradCoord<_SIMDType>::_(seed, hv1xr, hv1yr, hv1zr, d1xr, d1yr, d1zr));
 
-			val=simd::maskAdd(n0, simd::maskAdd(n1, val, v1), v0);
+			val=simd::add(simd::add(val, v1), v0);
 
 			if(i==0)
 			{

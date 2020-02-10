@@ -82,6 +82,7 @@ struct SIMD<SIMDType::AVX512>
     static Float _and(Float a, Float b) { return _mm512_and_ps(a, b); }
     static Float andNot(Float a, Float b) { return _mm512_andnot_ps(a, b); }
     static Float _xor(Float a, Float b) { return _mm512_xor_ps(a, b); }
+    static Float _or(Float a, Float b) { return _mm512_or_ps(a, b); }
 
     static Float floor(Float a) 
     { 

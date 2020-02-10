@@ -82,6 +82,7 @@ struct SIMD<SIMDType::AVX2>
     static Float _and(Float a, Float b) { return _mm256_and_ps(a, b); }
     static Float andNot(Float a, Float b) { return _mm256_andnot_ps(a, b); }
     static Float _xor(Float a, Float b) { return _mm256_xor_ps(a, b); }
+    static Float _or(Float a, Float b) { return _mm256_or_ps(a, b); }
 
     static Float floor(Float a) { return _mm256_floor_ps(a); }
     static Float abs(Float a) { return (_and(a, cast(Constants<Float, Int, SIMDType::AVX2>::numi_0x7fffffff))); }
