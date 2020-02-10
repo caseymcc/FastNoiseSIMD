@@ -94,6 +94,7 @@ struct SIMD
     static Float _and(Float a, Float b) { return cast(cast(a) & cast(b)); }
     static Float andNot(Float a, Float b) { return cast(~cast(a) & cast(b)); }
     static Float _xor(Float a, Float b) { return cast(cast(a)^cast(b)); }
+    static Float _or(Float a, Float b) { return cast(cast(a)|cast(b)); }
 
     static Float floor(Float a) { return floorf(a); }
     static Float abs(Float a) { return fabsf(a); }

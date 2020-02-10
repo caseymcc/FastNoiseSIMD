@@ -90,6 +90,7 @@ struct SIMD<SIMDType::SSE2>
     static Float _and(Float a, Float b) { return _mm_and_ps(a, b); }
     static Float andNot(Float a, Float b) { return _mm_andnot_ps(a, b); }
     static Float _xor(Float a, Float b) { return _mm_xor_ps(a, b); }
+    static Float _or(Float a, Float b) { return _mm_or_ps(a, b); }
 
     static Float VECTORCALL v_floor(Float a)
     {

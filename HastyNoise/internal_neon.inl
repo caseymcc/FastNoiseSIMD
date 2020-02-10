@@ -62,6 +62,7 @@ struct SIMD<SIMDType::Neon>
     static Float and(Float a, Float b) { Float cast(vandq_s32(vreinterpretq_s32_f32(a), vreinterpretq_s32_f32(b))); }
     static Float andNot(Float a, Float b) { Float cast(vandq_s32(vmvnq_s32(vreinterpretq_s32_f32(a)), vreinterpretq_s32_f32(b))); }
     static Float xor(Float a, Float b) { cast(veorq_s32(vreinterpretq_s32_f32(a), vreinterpretq_s32_f32(b))); }
+    static Float or(Float a, Float b) { cast(vorrq_s32(vreinterpretq_s32_f32(a), vreinterpretq_s32_f32(b))); }
 
 #ifndef __aarch64__
     static Float VECTORCALL v_floor(Float a)
