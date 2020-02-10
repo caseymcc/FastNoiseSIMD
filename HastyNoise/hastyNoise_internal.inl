@@ -341,10 +341,10 @@ struct Single<_SIMDType, NoiseType::Simplex>
         Float t2=simd::nmulAdd(z2, z2, simd::nmulAdd(y2, y2, simd::nmulAdd(x2, x2, Constant::numf_0_6)));
         Float t3=simd::nmulAdd(z3, z3, simd::nmulAdd(y3, y3, simd::nmulAdd(x3, x3, Constant::numf_0_6)));
 
-        Mask n0=simd::greaterEqual(t0, Constant::numf_0);
-        Mask n1=simd::greaterEqual(t1, Constant::numf_0);
-        Mask n2=simd::greaterEqual(t2, Constant::numf_0);
-        Mask n3=simd::greaterEqual(t3, Constant::numf_0);
+        t0=simd::max(t0, Constant::numf_0);
+        t1=simd::max(t1, Constant::numf_0);
+        t2=simd::max(t2, Constant::numf_0);
+        t3=simd::max(t3, Constant::numf_0);
 
         t0=simd::mulf(t0, t0);
         t1=simd::mulf(t1, t1);
@@ -354,9 +354,9 @@ struct Single<_SIMDType, NoiseType::Simplex>
         Float v0=simd::mulf(simd::mulf(t0, t0), GradCoord<_SIMDType>::_(seed, i, j, k, x0, y0, z0));
         Float v1=simd::mulf(simd::mulf(t1, t1), GradCoord<_SIMDType>::_(seed, simd::maskAdd(i1, i, Constant::numi_xPrime), simd::maskAdd(j1, j, Constant::numi_yPrime), simd::maskAdd(k1, k, Constant::numi_zPrime), x1, y1, z1));
         Float v2=simd::mulf(simd::mulf(t2, t2), GradCoord<_SIMDType>::_(seed, simd::maskAdd(i2, i, Constant::numi_xPrime), simd::maskAdd(j2, j, Constant::numi_yPrime), simd::maskAdd(k2, k, Constant::numi_zPrime), x2, y2, z2));
-        Float v3=simd::mask(n3, simd::mulf(simd::mulf(t3, t3), GradCoord<_SIMDType>::_(seed, simd::add(i, Constant::numi_xPrime), simd::add(j, Constant::numi_yPrime), simd::add(k, Constant::numi_zPrime), x3, y3, z3)));
+        Float v3=simd::mulf(simd::mulf(t3, t3), GradCoord<_SIMDType>::_(seed, simd::add(i, Constant::numi_xPrime), simd::add(j, Constant::numi_yPrime), simd::add(k, Constant::numi_zPrime), x3, y3, z3));
 
-        return simd::mulf(Constant::numf_32, simd::maskAdd(n0, simd::maskAdd(n1, simd::maskAdd(n2, v3, v2), v1), v0));
+        return simd::mulf(Constant::numf_32, simd::add(simd::add(simd::add(v3, v2), v1), v0));
     }
 };
 
