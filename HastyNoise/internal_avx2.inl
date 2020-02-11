@@ -65,9 +65,15 @@ struct SIMD<SIMDType::AVX2>
     static Float mulf(Float a, Float b) { return _mm256_mul_ps(a, b); }
     static Float div(Float a, Float b) { return _mm256_div_ps(a, b); }
 
+#ifdef HN_USE_FMA
     static Float mulAdd(Float a, Float b, Float c) { return _mm256_fmadd_ps(a, b, c); }
     static Float nmulAdd(Float a, Float b, Float c) { return _mm256_fnmadd_ps(a, b, c); }
     static Float mulSub(Float a, Float b, Float c) { return _mm256_fmsub_ps(a, b, c); }
+#else    
+    static Float mulAdd(Float a, Float b, Float c) { return add(mulf(a, b), c); }
+    static Float nmulAdd(Float a, Float b, Float c) { return sub(c, mulf(a, b)); }
+    static Float mulSub(Float a, Float b, Float c) { return sub(mulf(a, b), c); }
+#endif
 
     static Float min(Float a, Float b) { return _mm256_min_ps(a, b); }
     static Float max(Float  a, Float b) { return _mm256_max_ps(a, b); }
