@@ -46,8 +46,13 @@ struct SIMD<SIMDType::Neon>
     }
     static Float div(Float a, Float b) { v_div(a, b); }
 
+#ifdef HN_USE_FMA
     static Float mulAdd(Float a, Float b, Float c) { return vmlaq_f32(b, c, a); }
     static Float nmulAdd(Float a, Float b, Float c) { return vmlaq_f32(b, c, a); }
+#else
+    static Float mulAdd(Float a, Float b, Float c) { return add(mulf(a, b), c); }
+    static Float nmulAdd(Float a, Float b, Float c) { return sub(c, mulf(a, b)); }
+#endif
     static Float mulSub(Float a, Float b, Float c) { return sub(mulf(a, b), c); }
 
     static Float min(Float a, Float b) { vminq_f32(a, b); }
