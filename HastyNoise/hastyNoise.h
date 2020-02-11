@@ -66,10 +66,6 @@ namespace HastyNoise
 #   endif
 #endif
 
-// Using FMA instructions with AVX(51)2/NEON provides a small performance increase but can cause 
-// minute variations in noise output compared to other SIMD levels due to higher calculation precision
-// Intel compiler will always generate FMA instructions, use /Qfma- or -no-fma to disable
-#define HN_USE_FMA
 #endif
 
 #define HN_CELLULAR_INDEX_MAX 3

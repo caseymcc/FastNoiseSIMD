@@ -7,6 +7,11 @@ option(HN_FAST_INVSQRT "Use fast inverse sqrt" OFF)
 option(HN_BUILD_APP "Build test app" OFF)
 option(HN_PREVIEW_APP "Build preview app" ON)
 
+#Using FMA instructions with AVX(51)2/NEON provides a small performance increase but can cause 
+#minute variations in noise output compared to other SIMD levels due to higher calculation precision
+#Intel compiler will always generate FMA instructions, use /Qfma- or -no-fma to disable
+option(HN_USE_FMA "Use fused multiply/add, adds small performance to avx2/avx512/neon but output will differ minutely to other SIMD versions" ON)
+
 if(is_travis OR is_appveyor)
     set(HN_BUILD_APP ON CACHE BOOL "Build test app" FORCE) #force building app on CI
     set(HN_PREVIEW_APP OFF CACHE BOOL "Build preview app" FORCE) #don't need for CI
@@ -126,6 +131,7 @@ message(STATUS "HN_SIMD_SSE2: ${HN_SIMD_SSE2}")
 message(STATUS "HN_SIMD_SSE41: ${HN_SIMD_SSE41}")
 message(STATUS "HN_SIMD_AVX2: ${HN_SIMD_AVX2}")
 message(STATUS "HN_SIMD_AVX512: ${HN_SIMD_AVX512}")
+message(STATUS "HN_USE_FMA: ${HN_USE_FMA}")
 
 set(hastyNoise_external_lib)
 
@@ -252,6 +258,10 @@ if(HN_SIMD_AVX2)
     )
     set(library_targets ${library_targets} hastyNoise_avx2)
 
+    if(HN_USE_FMA)
+        target_compile_definitions(hastyNoise_avx2 PUBLIC "-DHN_USE_FMA")
+    endif()
+
     if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
         target_compile_options(hastyNoise_avx2 PRIVATE "/arch:AVX2" "/bigobj")
     elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
@@ -274,6 +284,10 @@ if(HN_SIMD_AVX512)
         ${hastyNoise_avx512_headers}
     )
     set(library_targets ${library_targets} hastyNoise_avx512)
+
+    if(HN_USE_FMA)
+        target_compile_definitions(hastyNoise_avx512 PUBLIC "-DHN_USE_FMA")
+    endif()
 
     if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
         target_compile_options(hastyNoise_avx512 PRIVATE "/arch:AVX512" "/bigobj")
