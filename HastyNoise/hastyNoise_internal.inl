@@ -1663,11 +1663,14 @@ static void CallBuildCellularLookup(NoiseType noiseType, PerturbType perturbType
     case NoiseType::Simplex:
         CallBuildCellularLookup<_SIMDType, _BuildType, _cellularReturnType, NoiseType::Simplex>(noiseType, perturbType, fractalType, cellularDistance, args...);
         break;
-	case NoiseType::OpenSimplex2:
-		CallBuildCellularLookup<_SIMDType, _BuildType, _cellularReturnType, NoiseType::OpenSimplex2>(noiseType, perturbType, fractalType, cellularDistance, args...);
-		break;
     case NoiseType::SimplexFractal:
         CallBuildCellularLookup<_SIMDType, _BuildType, _cellularReturnType, NoiseType::SimplexFractal>(noiseType, perturbType, fractalType, cellularDistance, args...);
+        break;
+    case NoiseType::OpenSimplex2:
+        CallBuildCellularLookup<_SIMDType, _BuildType, _cellularReturnType, NoiseType::OpenSimplex2>(noiseType, perturbType, fractalType, cellularDistance, args...);
+        break;
+    case NoiseType::OpenSimplex2Fractal:
+        CallBuildCellularLookup<_SIMDType, _BuildType, _cellularReturnType, NoiseType::OpenSimplex2Fractal>(noiseType, perturbType, fractalType, cellularDistance, args...);
         break;
     case NoiseType::WhiteNoise:
         CallBuildCellularLookup<_SIMDType, _BuildType, _cellularReturnType, NoiseType::WhiteNoise>(noiseType, perturbType, fractalType, cellularDistance, args...);
