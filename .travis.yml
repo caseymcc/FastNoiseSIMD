@@ -130,7 +130,7 @@ install:
   - export ANDROID_NDK_r17="`pwd`/_ci/android-ndk-r17"
 
   # use newer bin tools
-  export PATH=/usr/lib/binutils-2.26/bin:${PATH}
+  - export PATH=/usr/lib/binutils-2.26/bin:${PATH}
 
 script:
   - python3 ./jenkins.py
