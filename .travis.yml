@@ -54,10 +54,11 @@ matrix:
         TOOLCHAIN=analyze-cxx17
         PROJECT_DIR=./
 
-    - os: linux
-      env: >
-        TOOLCHAIN=sanitize-address-cxx17
-        PROJECT_DIR=./
+#clang crash
+#    - os: linux
+#      env: >
+#        TOOLCHAIN=sanitize-address-cxx17
+#        PROJECT_DIR=./
 
     - os: linux
       env: >
