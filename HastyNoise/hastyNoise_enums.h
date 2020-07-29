@@ -55,13 +55,13 @@ struct NameTypeKey
 template<typename _Type>
 struct EnumKeys
 {
-
     static std::vector<NameTypeKey<_Type>> keys;
 };
 
 constexpr size_t SIMDTypeCount=6;
 enum class SIMDType { None=0, Neon=1, SSE2=2, SSE4_1=3, AVX2=4, AVX512=5 };
-template<> HASTY_INLINE_VAR std::vector<NameTypeKey<SIMDType>> EnumKeys<SIMDType>::keys=
+template<>
+std::vector<NameTypeKey<SIMDType>> EnumKeys<SIMDType>::keys
 {
     {"None", HastyNoise::SIMDType::None},
     {"Neon", HastyNoise::SIMDType::Neon},
@@ -72,19 +72,10 @@ template<> HASTY_INLINE_VAR std::vector<NameTypeKey<SIMDType>> EnumKeys<SIMDType
 };
 
 enum class NoiseType { None, Value, ValueFractal, Perlin, PerlinFractal, Simplex, SimplexFractal, WhiteNoise, Cellular, Cubic, CubicFractal };
-template<> HASTY_INLINE_VAR std::vector<NameTypeKey<NoiseType>> EnumKeys<NoiseType>::keys=
+template<>
+struct EnumKeys<NoiseType>
 {
-    {"None", HastyNoise::NoiseType::None},
-    {"Value", HastyNoise::NoiseType::Value},
-    {"ValueFractal", HastyNoise::NoiseType::ValueFractal},
-    {"Perlin", HastyNoise::NoiseType::Perlin},
-    {"PerlinFractal", HastyNoise::NoiseType::PerlinFractal},
-    {"Simplex", HastyNoise::NoiseType::Simplex},
-    {"SimplexFractal", HastyNoise::NoiseType::SimplexFractal},
-    {"WhiteNoise", HastyNoise::NoiseType::WhiteNoise},
-    {"Cellular", HastyNoise::NoiseType::Cellular},
-    {"Cubic", HastyNoise::NoiseType::Cubic},
-    {"CubicFractal", HastyNoise::NoiseType::CubicFractal}
+    static std::vector<NameTypeKey<NoiseType>> keys;
 };
 
 inline bool isFractal(NoiseType type)
@@ -111,64 +102,45 @@ inline bool isFractal(NoiseType type)
 }
 
 enum class FractalType { None, FBM, Billow, RigidMulti };
-template<> HASTY_INLINE_VAR std::vector<NameTypeKey<FractalType>> EnumKeys<FractalType>::keys=
+template<>
+struct EnumKeys<FractalType>
 {
-    {"None", HastyNoise::FractalType::None},
-    {"FBM", HastyNoise::FractalType::FBM},
-    {"Billow", HastyNoise::FractalType::Billow},
-    {"RigidMulti", HastyNoise::FractalType::RigidMulti}
+    static std::vector<NameTypeKey<FractalType>> keys;
 };
 
 enum class PerturbType { None, Gradient, GradientFractal, Normalise, Gradient_Normalise, GradientFractal_Normalise };
-template<> HASTY_INLINE_VAR std::vector<NameTypeKey<PerturbType>> EnumKeys<PerturbType>::keys=
+template<>
+struct EnumKeys<PerturbType>
 {
-    {"None", HastyNoise::PerturbType::None},
-    {"Gradient", HastyNoise::PerturbType::Gradient},
-    {"GradientFractal", HastyNoise::PerturbType::GradientFractal},
-    {"Normalise", HastyNoise::PerturbType::Normalise},
-    {"Gradient_Normalise", HastyNoise::PerturbType::Gradient_Normalise},
-    {"GradientFractal_Normalise", HastyNoise::PerturbType::GradientFractal_Normalise}
+    static std::vector<NameTypeKey<PerturbType>> keys;
 };
 
 enum class CellularDistance { None, Euclidean, Manhattan, Natural };
-template<> HASTY_INLINE_VAR std::vector<NameTypeKey<CellularDistance>> EnumKeys<CellularDistance>::keys=
+template<>
+struct EnumKeys<CellularDistance>
 {
-    {"None", HastyNoise::CellularDistance::None},
-    {"Euclidean", HastyNoise::CellularDistance::Euclidean},
-    {"Manhattan", HastyNoise::CellularDistance::Manhattan},
-    {"Natural", HastyNoise::CellularDistance::Natural}
+    static std::vector<NameTypeKey<CellularDistance>> keys;
 };
 
 enum class CellularReturnType { None, Value, Distance, Distance2, ValueDistance2, Distance2Add, Distance2Sub, Distance2Mul, Distance2Div, NoiseLookup, Distance2Cave };
-template<> HASTY_INLINE_VAR std::vector<NameTypeKey<CellularReturnType>> EnumKeys<CellularReturnType>::keys=
+template<>
+struct EnumKeys<CellularReturnType>
 {
-    {"None", HastyNoise::CellularReturnType::None},
-    {"Value", HastyNoise::CellularReturnType::Value},
-    {"Distance", HastyNoise::CellularReturnType::Distance},
-    {"Distance2", HastyNoise::CellularReturnType::Distance2},
-    {"ValueDistance2", HastyNoise::CellularReturnType::ValueDistance2},
-    {"Distance2Add", HastyNoise::CellularReturnType::Distance2Add},
-    {"Distance2Sub", HastyNoise::CellularReturnType::Distance2Sub},
-    {"Distance2Mul", HastyNoise::CellularReturnType::Distance2Mul},
-    {"Distance2Div", HastyNoise::CellularReturnType::Distance2Div},
-    {"NoiseLookup", HastyNoise::CellularReturnType::NoiseLookup},
-    {"Distance2Cave", HastyNoise::CellularReturnType::Distance2Cave}
+    static std::vector<NameTypeKey<CellularReturnType>> keys;
 };
 
 enum class NoiseClass { Single, Fractal, Cellular };
-template<> HASTY_INLINE_VAR std::vector<NameTypeKey<NoiseClass>> EnumKeys<NoiseClass>::keys=
+template<>
+struct EnumKeys<NoiseClass>
 {
-    {"Single", HastyNoise::NoiseClass::Single},
-    {"Fractal", HastyNoise::NoiseClass::Fractal},
-    {"Cellular", HastyNoise::NoiseClass::Cellular}
+    static std::vector<NameTypeKey<NoiseClass>> keys;
 };
 
 enum class BuildType { Default, Map, Vector };
-template<> HASTY_INLINE_VAR std::vector<NameTypeKey<BuildType>> EnumKeys<BuildType>::keys=
+template<>
+struct EnumKeys<BuildType>
 {
-    {"Default", HastyNoise::BuildType::Default},
-    {"Map", HastyNoise::BuildType::Map},
-    {"Vector", HastyNoise::BuildType::Vector}
+    static std::vector<NameTypeKey<BuildType>> keys;
 };
 
 template<typename _Type>

@@ -125,6 +125,7 @@ set(hastyNoise_external_lib)
 
 set(hastyNoise_sources
     HastyNoise/hastyNoise.cpp
+    HastyNoise/hastyNoise_enums.cpp
     HastyNoise/hastyNoise_none.cpp
 )
 
