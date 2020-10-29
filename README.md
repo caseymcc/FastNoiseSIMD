@@ -1,3 +1,5 @@
+# Depreciated
+HastyNoise is now depreciated, it has been replaced by [FastNoise 2](https://github.com/Auburn/FastNoise2).
 
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg?style=flat-square "License")](https://github.com/caseymcc/HastyNoise/blob/master/LICENSE)
 [![hunter](https://img.shields.io/badge/hunter-HastyNoise-blue.svg)](https://docs.hunter.sh/en/latest/packages/pkg/HastyNoise.html#pkg-hastynoise)
